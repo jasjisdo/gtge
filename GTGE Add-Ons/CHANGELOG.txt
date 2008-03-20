@@ -1,0 +1,13 @@
+============
+GTGE ADD-ONS
+============
+
+Website : http://www.goldenstudios.or.id/
+Source  : http://gtge.googlecode.com/
+License : LGPL (see LICENSE.txt and LICENSE.LESSER.txt)
+
+
+----------
+Change Log
+----------
+

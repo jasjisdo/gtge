@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+
+<body bgcolor="white">
+<p>This package is the heart of the game, containing objects visible in the game, such as sprite class, background class, etc. This package is GTGE answers to game sprite management.</p>
+
+<p>This package consists of :
+<ul>
+	<li>{@link com.golden.gamedev.object.Sprite} class, in GTGE terminology, all graphical objects in the game that have its own behaviour.</li>
+	<li>{@link com.golden.gamedev.object.Background} class, can be imagine as the place where the sprite lived.</li>
+	<li>{@link com.golden.gamedev.object.SpriteGroup} class is a class to manage many sprites easily by grouping a group of same behaviour sprites.</li>
+	<li>{@link com.golden.gamedev.object.PlayField} class, where all the objects (sprites and background) stored and managed.</li>
+	<li>{@link com.golden.gamedev.object.CollisionManager} class to manage collision between the sprites.</li>
+</ul>
+</p>
+
+<p>GTGE provides a complete sprite handling, from updating and showing the sprite itself to the screen (with animation or still), placing the sprites in various background types (eg: tiling background, parallax background, etc), and detecting the collision between the sprites in clean way.</p>
+
+<p>This package is GTGE approach for managing objects in game, however you do not have to force yourself to use this package, you even may, not use this package at all. With only the core package ({@link com.golden.gamedev} package) you are able to make a game, it has already provide all things needed for making a game.<br />
+Use this package if only your game really need to use sprite, background, collision, etc.</p>
+
+<!-- For tutorials, examples, guides, and tool documentation, please see : -->
+<h2>Related Documentation</h2>
+
+<p>For tutorials, examples, please see :
+<ul>
+	<li>Tutorial 7: <em>"Sprite and Background"</em> - <a href="../../../../tutorials/tutorial7.html" title="this option is enabled if only you read this API documentation right from downloaded GTGE Complete Pack">Offline Tutorial</a> | <a href="http://www.goldenstudios.or.id/forum/showthread.php?tid=54">Online Tutorial</a></li>
+</ul>
+</p>
+
+@see com.golden.gamedev.object.Sprite
+@see com.golden.gamedev.object.Background
+</body>
+
+</html>

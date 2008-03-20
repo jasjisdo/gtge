@@ -1,0 +1,54 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+</head>
+
+<body bgcolor="white">
+<p>The core package of Golden T Game Engine (GTGE) Frame Work<br />
+<b>(this package is where you should start first)</b>.</p>
+
+<p>This package consists of :
+<ul>
+	<li>The {@link com.golden.gamedev.Game} class (base class) that initializing the basic game frame work.</li>
+	<li>The {@link com.golden.gamedev.GameLoader} class that handle <code>Game</code> class initialization.</li>
+	<li>The {@link com.golden.gamedev.GameEngine} class that able to handle multiple <code>Game</code> class object, in order to separate game logic into separate entities.</li>
+	<li>The {@link com.golden.gamedev.GameObject} class, the entity used by <code>GameEngine</code> class (replacing the <code>Game</code> class functionality).</li>
+</ul>
+</p>
+
+<p>All the game engines have been setup within this package : the rendering to the screen, polling user input (keyboard/mouse), timing in the game, loading images, playing sounds, etc, thus only with this package you can straight making a game! <br />
+You could start design the game and use the engines to make up the game from scratch, you could load a bunch of images and show it to the screen, move the images based on user input, playing music in the game, etc, all things needed for making a game has been provided by this package.</p>
+
+<p>However you might want to check GTGE solution to sprite management in {@link com.golden.gamedev.object} package. <br />
+GTGE provides a sprite management in clean way : handling many sprites (object in the game) with easily, detecting collisions of one against another sprite without much effort, and you can use up various background types in the game (eg: tile background, parallax background, etc). <br />
+With GTGE sprite management, your game development would be much easier!</p>
+
+<p><u>How to use this package</u> :<br />
+Start from subclassing <code>Game</code> class and make your game in it, then load/initialize the class using <code>GameLoader</code> class.<br />
+After the game is getting bigger and the game logic is urgently need to be in separated entities (eg: separating title menu from the game play), use <code>GameEngine</code> class with its companion class, the <code>GameObject</code> class.</p>
+
+<!--
+<h2>Package Specification</h2>
+
+<ul>
+  <li><a href="">##### REFER TO ANY OTHER THIRD PARTY LIBRARIES HERE #####</a></li>
+</ul>
+-->
+
+<!-- For tutorials, examples, guides, and tool documentation, please see : -->
+<h2>Related Documentation</h2>
+
+<p>For tutorials, please see :
+<ul>
+	<li>Tutorial 4: <em>"Starting New Game"</em> - <a href="../../../../tutorials/tutorial4.html" title="this option is enabled if only you read this API documentation right from downloaded GTGE Complete Pack">Offline Tutorial</a> | <a href="http://www.goldenstudios.or.id/forum/showthread.php?tid=51	">Online Tutorial</a></li>
+</ul>
+</p>
+
+@see com.golden.gamedev.Game
+@see com.golden.gamedev.GameLoader
+@see com.golden.gamedev.engine
+@see com.golden.gamedev.object
+</body>
+
+</html>
