@@ -17,9 +17,15 @@
 package com.golden.gamedev.engine.audio;
 
 // JFC
-import java.io.*;
-import java.net.*;
-import javax.sound.midi.*;
+import java.net.URL;
+
+import javax.sound.midi.MetaEventListener;
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Synthesizer;
 
 // GTGE
 import com.golden.gamedev.engine.BaseAudioRenderer;
