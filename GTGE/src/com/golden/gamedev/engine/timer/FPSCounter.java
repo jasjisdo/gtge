@@ -14,8 +14,8 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package com.golden.gamedev.engine.timer;
 
+package com.golden.gamedev.engine.timer;
 
 /**
  * A utility class to calculate timer frame per seconds (FPS) in convenient way. <p>
@@ -72,7 +72,7 @@ public class FPSCounter {
 
 	/**
 	 * Returns current FPS.
-	 *
+	 * @return The current FPS.
 	 * @see #calculateFPS()
 	 */
 	public int getCurrentFPS() {
