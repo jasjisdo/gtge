@@ -17,9 +17,20 @@
 package com.golden.gamedev.engine.graphics;
 
 // JFC
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.Frame;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Toolkit;
+
 import java.awt.image.BufferStrategy;
 import java.awt.image.VolatileImage;
+
 import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +89,8 @@ public class FullScreenMode implements BaseGraphics, Comparator {
 	/**
 	 * Creates new instance of Full Screen Graphics Engine with specified
 	 * size, and whether want to use bufferstrategy or volatile image.
+	 * @param d The resolution of fullscreen mode.
+	 * @param bufferstrategy If a buffer stratagy shall be used.
 	 */
     public FullScreenMode(Dimension d, boolean bufferstrategy) {
         this.size = d;
@@ -302,6 +315,7 @@ public class FullScreenMode implements BaseGraphics, Comparator {
 
 	/**
 	 * Returns the top level frame where this graphics engine is being put on.
+	 * @return The top level frame.
 	 */
 	public Frame getFrame() {
 		return frame;
@@ -310,6 +324,7 @@ public class FullScreenMode implements BaseGraphics, Comparator {
 	/**
 	 * Returns whether this graphics engine is using buffer strategy or volatile
 	 * image.
+	 * @return If a buffer strategy or a volatile image is used.
 	 */
 	public boolean isBufferStrategy() {
 		return (strategy != null);

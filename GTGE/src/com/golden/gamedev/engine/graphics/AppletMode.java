@@ -17,7 +17,16 @@
 package com.golden.gamedev.engine.graphics;
 
 // JFC
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Toolkit;
+
 import java.awt.image.BufferStrategy;
 import java.applet.Applet;
 

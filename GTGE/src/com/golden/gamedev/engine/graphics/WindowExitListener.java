@@ -36,6 +36,7 @@ public final class WindowExitListener implements WindowListener {
 
 	/**
 	 * Returns <code>WindowExitListener</code> singleton instance.
+	 * @return The singleton instance.
 	 */
 	public static WindowListener getInstance() {
 		return singleton;

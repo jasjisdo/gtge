@@ -17,7 +17,18 @@
 package com.golden.gamedev.engine.graphics;
 
 // JFC
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Insets;
+import java.awt.Image;
+import java.awt.Toolkit;
+
 import java.awt.image.BufferStrategy;
 import java.awt.image.VolatileImage;
 
@@ -76,6 +87,8 @@ public class WindowedMode implements BaseGraphics {
 	/**
 	 * Creates new instance of Windowed Graphics Engine with specified size,
 	 * and whether want to use bufferstrategy or volatile image.
+	 * @param d The resolution of the window.
+	 * @param bufferstrategy If a buffer strategy shall be used.
 	 */
     public WindowedMode(Dimension d, boolean bufferstrategy) {
 	    this.size = d;
@@ -275,6 +288,7 @@ public class WindowedMode implements BaseGraphics {
 
 	/**
 	 * Returns the top level frame where this graphics engine is being put on.
+	 * @return The top level frame.
 	 */
 	public Frame getFrame() {
 		return frame;
@@ -283,6 +297,7 @@ public class WindowedMode implements BaseGraphics {
 	/**
 	 * Returns whether this graphics engine is using buffer strategy or volatile
 	 * image.
+	 * @return If a buffer strategy or a volatile image is used.
 	 */
 	public boolean isBufferStrategy() {
 		return (strategy != null);
