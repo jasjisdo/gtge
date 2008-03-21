@@ -49,6 +49,9 @@ public class KeyTyped {
 	/**
 	 * Constructs new <code>KeyTyped</code> using following input engine, and
 	 * specified initial repeat delay and repeat rate delay.
+	 * @param bsInput The {@link BaseInput} to use.
+	 * @param repeatDelay The repeat delay.
+	 * @param repeatRate The repeat rate.
 	 */
 	public KeyTyped(BaseInput bsInput, int repeatDelay, int repeatRate) {
 		this.bsInput = bsInput;
@@ -64,6 +67,7 @@ public class KeyTyped {
 	/**
 	 * Constructs new <code>KeyTyped</code> with 450 ms repeat delay and 40 ms
 	 * repeat rate.
+     * @param bsInput The {@link BaseInput} to use.
 	 */
 	public KeyTyped(BaseInput bsInput) {
 		this(bsInput, 450, 40);
@@ -76,6 +80,7 @@ public class KeyTyped {
 
     /**
      * Updates key typing.
+     * @param elapsedTime The elapsed time since last update.
      */
 	public void update(long elapsedTime) {
 		keyTyped = bsInput.getKeyPressed();
@@ -131,8 +136,8 @@ public class KeyTyped {
 
 	/**
 	 * Returns key typed or {@link BaseInput#NO_KEY} if no key is being typed.
-	 *
-	 * @see java.awt.event.KeyEvent#VK_1
+	 * @return The typed key or {@link BaseInput#NO_KEY}.
+     * @see java.awt.event.KeyEvent#VK_1
 	 */
 	public int getKeyTyped() {
 		return keyTyped;
@@ -140,8 +145,9 @@ public class KeyTyped {
 
 	/**
 	 * Returns true if the specified key is being typed.
-	 *
-	 * @see java.awt.event.KeyEvent#VK_1
+	 * @param keyCode The code of the key to check.
+	 * @return If the given key is pressed.
+     * @see java.awt.event.KeyEvent#VK_1
 	 */
 	public boolean isKeyTyped(int keyCode) {
 		return (keyTyped == keyCode);
@@ -154,7 +160,7 @@ public class KeyTyped {
 
 	/**
 	 * Returns the key typed initial delay.
-	 *
+	 * @return The repeat delay.
 	 * @see #getKeyTyped()
 	 */
 	public long getRepeatDelay() {
@@ -163,7 +169,7 @@ public class KeyTyped {
 
 	/**
 	 * Sets the key typed initial delay.
-	 *
+	 * @param delay The repeat delay.
 	 * @see #getKeyTyped()
 	 */
 	public void setRepeatDelay(long delay) {
@@ -173,7 +179,7 @@ public class KeyTyped {
 
 	/**
 	 * Returns the key typed repeat rate delay.
-	 *
+	 * @return The repeat rate.
 	 * @see #getKeyTyped()
 	 */
 	public long getRepeatRate() {
@@ -182,7 +188,7 @@ public class KeyTyped {
 
 	/**
 	 * Sets the key typed repeat rate delay.
-	 *
+	 * @param rate The repat rate.
 	 * @see #getKeyTyped()
 	 */
 	public void setRepeatRate(long rate) {

@@ -17,9 +17,9 @@
 package com.golden.gamedev.engine.input;
 
 // JFC
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Component;
+import java.awt.event.KeyEvent;
+import java.util.BitSet;
 
 
 public class EnhancedAWTInput extends AWTInput {

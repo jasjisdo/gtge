@@ -17,8 +17,24 @@
 package com.golden.gamedev.engine.input;
 
 // JFC
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Robot;
+import java.awt.Toolkit;
+
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
 import java.awt.image.BufferedImage;
 
 // GTGE
@@ -78,7 +94,8 @@ public class AWTInput implements BaseInput {
  /****************************************************************************/
 
 	/**
-	 * Creates new AWT Input from specified component.
+	 * Creates new {@link AWTInput} from specified component.
+	 * @param comp The component to create a {@link AWTInput} for.
 	 */
     public AWTInput(Component comp) {
         component = comp;
@@ -131,7 +148,8 @@ public class AWTInput implements BaseInput {
     }
 
     /**
-     * Creates the default input listener of this AWT Input Component.
+     * Creates the default {@link InputListener} of this AWT Input Component.
+     * @return The default {@link InputListener}.
      */
 	protected InputListener createInputListener() {
 		return new InputListener();
@@ -276,7 +294,8 @@ public class AWTInput implements BaseInput {
 	}
 
 	/**
-	 * Returns boolean (on/off) mapping of pressed mouse button.
+	 * Returns boolean (on/off) mapping of pressed mouse buttons.
+	 * @return The mapping of pressed mouse buttons.
 	 */
 	public boolean[] getMouseDown() {
 		return mouseDown;
@@ -320,7 +339,8 @@ public class AWTInput implements BaseInput {
 	}
 
 	/**
-	 * Returns boolean (on/off) mapping of currently pressed key.
+	 * Returns boolean (on/off) mapping of currently pressed keys.
+	 * @return The mapping of currently pressed keys
 	 */
 	public boolean[] getKeyDown() {
 		return keyDown;
@@ -363,6 +383,7 @@ public class AWTInput implements BaseInput {
 
     /**
      * Returns the AWT Component used by this input engine.
+     * @return The {@link Component} used by the input engine.
      */
     public Component getComponent() {
 		return component;
