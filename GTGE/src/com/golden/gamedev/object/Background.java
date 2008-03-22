@@ -17,7 +17,9 @@
 package com.golden.gamedev.object;
 
 // JFC
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.io.Serializable;
 
 

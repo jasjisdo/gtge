@@ -19,10 +19,11 @@ package com.golden.gamedev.object;
 // JFC
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.util.Comparator;
 
 // GTGE
-import com.golden.gamedev.util.Utility;
-import com.golden.gamedev.object.collision.*;
+import com.golden.gamedev.object.collision.CollisionRect;
+import com.golden.gamedev.object.collision.CollisionShape;
 
 
 /**
@@ -485,10 +486,10 @@ public class Sprite implements java.io.Serializable {
 	 *
 	 * The angle is as followed:
 	 * <pre>
-	 *   0°   : moving to top (12 o'clock)
-	 *   90°  : moving to right (3 o'clock)
-	 *   180° : moving to bottom (6 o'clock)
-	 *   270° : moving to left (9 o'clock)
+	 *   0ï¿½   : moving to top (12 o'clock)
+	 *   90ï¿½  : moving to right (3 o'clock)
+	 *   180ï¿½ : moving to bottom (6 o'clock)
+	 *   270ï¿½ : moving to left (9 o'clock)
 	 * </pre>
 	 */
 	public void setMovement(double speed, double angleDir) {

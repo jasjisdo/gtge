@@ -16,10 +16,6 @@
  */
 package com.golden.gamedev.engine;
 
-// JFC
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-
 
 /**
  * <code>BaseInput</code> interface provides all needed functions for polling
@@ -73,6 +69,7 @@ public interface BaseInput {
 
     /**
      * Updates input engine, this method need to be called in tight loop.
+     * @param elapsedTime The time elapsed since the last update.
      */
 	public void update(long elapsedTime);
 
@@ -101,26 +98,31 @@ public interface BaseInput {
 
 	/**
 	 * Returns true, if the mouse pointer is in input component area.
+	 * @return If the mouse is over the input component.
 	 */
 	public boolean isMouseExists();
 
 	/**
 	 * Returns the mouse <code>x</code>-coordinate.
+	 * @return The x location.
 	 */
 	public int getMouseX();
 
 	/**
 	 * Returns the mouse <code>y</code>-coordinate.
+	 * @return The y location.
 	 */
 	public int getMouseY();
 
 	/**
 	 * Returns the delta of mouse <code>x</code>-coordinate.
+	 * @return The x movement.
 	 */
 	public int getMouseDX();
 
 	/**
 	 * Returns the delta of mouse <code>y</code>-coordinate.
+	 * @return The y movement.
 	 */
 	public int getMouseDY();
 
@@ -132,7 +134,7 @@ public interface BaseInput {
 	/**
 	 * Returns mouse button released or {@link #NO_BUTTON} if no button is being
 	 * released.
-	 *
+	 * @return The released mouse button.
 	 * @see java.awt.event.MouseEvent#BUTTON1
 	 * @see java.awt.event.MouseEvent#BUTTON2
 	 * @see java.awt.event.MouseEvent#BUTTON3
@@ -153,7 +155,7 @@ public interface BaseInput {
 	/**
 	 * Returns mouse button pressed or {@link #NO_BUTTON} if no button is being
 	 * pressed.
-	 *
+	 * @return The pressed mouse button.
 	 * @see java.awt.event.MouseEvent#BUTTON1
 	 * @see java.awt.event.MouseEvent#BUTTON2
 	 * @see java.awt.event.MouseEvent#BUTTON3
@@ -191,6 +193,7 @@ public interface BaseInput {
 
 	/**
 	 * Returns mouse pointer visible status.
+	 * @return If the mouse is visible.
 	 */
 	public boolean isMouseVisible();
 
@@ -201,7 +204,7 @@ public interface BaseInput {
 
 	/**
 	 * Returns key released or {@link #NO_KEY} if no key is released.
-	 *
+	 * @return The key code of the released key.
 	 * @see java.awt.event.KeyEvent#VK_1
 	 */
 	public int getKeyReleased();
@@ -217,7 +220,7 @@ public interface BaseInput {
 
 	/**
 	 * Returns key pressed or {@link #NO_KEY} if no key is pressed.
-	 *
+	 * @return The key code of the pressed key.
 	 * @see java.awt.event.KeyEvent#VK_1
 	 */
 	public int getKeyPressed();
@@ -245,7 +248,7 @@ public interface BaseInput {
 	 * Key typed is key event that simulate key typing, key that fired following
 	 * {@link #getRepeatDelay() initial repeat delay} and
 	 * {@link #getRepeatRate() repeat rate delay}.
-	 *
+	 * @return The key code of the key typed.
 	 * @see java.awt.event.KeyEvent#VK_1
 	 */
 	public int getKeyTyped();
@@ -255,35 +258,36 @@ public interface BaseInput {
 	 * Key typed is key event that simulate key typing, key that fired following
 	 * {@link #getRepeatDelay() initial repeat delay} and
 	 * {@link #getRepeatRate() repeat rate delay}.
-	 *
+	 * @param keyCode The key code of the key to check.
+	 * @return If the key with the given key code is typed.
 	 * @see java.awt.event.KeyEvent#VK_1
 	 */
 	public boolean isKeyTyped(int keyCode);
 
 	/**
-	 * Returns the initial delay for repeating key typed.
-	 *
+	 * Returns the delay for repeating key typed.
+	 * @return The repeat delay.
 	 * @see #getKeyTyped()
 	 */
 	public long getRepeatDelay();
 
 	/**
 	 * Sets the initial delay for repeating key typed.
-	 *
+	 * @param delay The new repeat delay.
 	 * @see #getKeyTyped()
 	 */
 	public void setRepeatDelay(long delay);
 
 	/**
 	 * Returns the repeat rate delay for repeating key typed.
-	 *
+	 * @return The repeat rate.
 	 * @see #getKeyTyped()
 	 */
 	public long getRepeatRate();
 
 	/**
 	 * Sets the repeat rate delay for repeating key typed.
-	 *
+	 * @param rate The new repeat rate.
 	 * @see #getKeyTyped()
 	 */
 	public void setRepeatRate(long rate);

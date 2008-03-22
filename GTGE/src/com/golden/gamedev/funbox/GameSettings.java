@@ -17,16 +17,30 @@
 package com.golden.gamedev.funbox;
 
 // JFC
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Frame;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
+
 import java.awt.event.ActionEvent;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.event.ActionListener;
+
 import java.net.URL;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.Border;
+
 // GTGE
-import com.golden.gamedev.util.ImageUtil;
 import com.golden.gamedev.engine.graphics.WindowExitListener;
+import com.golden.gamedev.util.ImageUtil;
 
 
 /**
@@ -135,7 +149,7 @@ public abstract class GameSettings extends JDialog implements ActionListener,
 	 *       }
 	 *    };
 	 * </pre>
-	 *
+	 * @param splashImage The {@link URL} of the splash image or null.
 	 * @see com.golden.gamedev.GameLoader
 	 */
 	public GameSettings(URL splashImage) {
@@ -170,15 +184,17 @@ public abstract class GameSettings extends JDialog implements ActionListener,
      *
      * Used for direct play without specifying the game option everytime running
      * the game while in developing stage.
+     * @param fullscreen If fullscreen is used.
+     * @param bufferStrategy If a buffer strategy is used.
      */
-	public GameSettings(boolean fullScreen, boolean bufferStrategy) {
-		initGUI();
+	public GameSettings(boolean fullscreen, boolean bufferStrategy) {
+		this.initGUI();
 
-	    fullscreen.setSelected(fullScreen);
-	    bufferstrategy.setSelected(bufferStrategy);
+	    this.fullscreen.setSelected(fullscreen);
+	    this.bufferstrategy.setSelected(bufferStrategy);
 
-		dispose();
-		start();
+		this.dispose();
+		this.start();
 	}
 
     /**
@@ -187,6 +203,7 @@ public abstract class GameSettings extends JDialog implements ActionListener,
      *
      * Used in game development, so no need to always specify the game option
      * everytime running the game while in developing stage.
+     * @param fullscreen If fullscreen is used.
      */
     public GameSettings(boolean fullscreen) {
 	    this(fullscreen, true);

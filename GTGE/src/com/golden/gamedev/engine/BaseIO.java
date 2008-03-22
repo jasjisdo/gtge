@@ -110,6 +110,13 @@ public class BaseIO {
 
 	/**
 	 * Returns URL from specified path with specified mode.
+	 * @param path The path to get the URL from.
+	 * @param mode The mode to retrieve the URL.
+	 * @return The {@link URL}.
+	 * @see #CLASS_LOADER
+	 * @see #CLASS_URL
+	 * @see #SYSTEM_LOADER
+	 * @see #WORKING_DIRECTORY
 	 */
 	public URL getURL(String path, int mode) {
 		URL url = null;
@@ -143,8 +150,11 @@ public class BaseIO {
 	}
 
 	/**
-	 * Returns URL from specified path with this <code>BaseIO</code> default
+	 * Returns URL from specified path with this {@link BaseIO} default
 	 * mode.
+	 * @param path The path to retrieve the URL from.
+	 * @return The {@link URL} of the given path.
+	 * @see #getMode()
 	 */
 	public URL getURL(String path) {
 		URL url = null;
@@ -180,7 +190,14 @@ public class BaseIO {
  /****************************************************************************/
 
 	/**
-	 * Returns input stream from specified path with specified mode.
+	 * Returns {@link InputStream} from specified path with specified mode.
+	 * @param path The path to retrieve an {@link InputStream} from.
+	 * @param mode The mode to use for retrieving the {@link InputStream}.
+	 * @return The {@link InputStream}.
+     * @see #CLASS_LOADER
+     * @see #CLASS_URL
+     * @see #SYSTEM_LOADER
+     * @see #WORKING_DIRECTORY
 	 */
 	public InputStream getStream(String path, int mode) {
 		InputStream stream = null;
@@ -215,6 +232,9 @@ public class BaseIO {
 	/**
 	 * Returns input stream from specified path with this <code>BaseIO</code>
 	 * default mode.
+	 * @param path The path to retrieve an {@link InputStream} from.
+     * @return The {@link InputStream}.
+     * @see #getMode()
 	 */
 	public InputStream getStream(String path) {
 		InputStream stream = null;
@@ -251,6 +271,13 @@ public class BaseIO {
 
 	/**
 	 * Return file from specified path with specified mode.
+	 * @param path The path to retrieve an {@link File} from.
+     * @param mode The mode to use for retrieving the {@link File}.
+     * @return The {@link File}.
+     * @see #CLASS_LOADER
+     * @see #CLASS_URL
+     * @see #SYSTEM_LOADER
+     * @see #WORKING_DIRECTORY
 	 */
 	public File getFile(String path, int mode) {
 		File file = null;
@@ -295,10 +322,12 @@ public class BaseIO {
 	 * object (this method), because <code>java.io.File</code> is system
 	 * dependent and not working inside jar file, use <code>java.net.URL</code>
 	 * OR <code>java.io.InputStream</code> instead. <p>
-	 *
+	 * @param path The path to retrieve an {@link File} from.
+     * @return The {@link File}.
 	 * @see #getURL(String)
 	 * @see #getStream(String)
 	 * @see #setFile(String)
+	 * @see #getMode()
 	 */
 	public File getFile(String path) {
 		File file = null;
@@ -335,6 +364,13 @@ public class BaseIO {
 
 	/**
 	 * Returns file on specified path with specified mode for processing.
+	 * @param path The path to retrieve a {@link File} from.
+     * @param mode The mode to use for retrieving the {@link File}.
+     * @return The {@link File}.
+     * @see #CLASS_LOADER
+     * @see #CLASS_URL
+     * @see #SYSTEM_LOADER
+     * @see #WORKING_DIRECTORY
 	 */
 	public File setFile(String path, int mode) {
 		File file = null;
@@ -375,6 +411,8 @@ public class BaseIO {
 	/**
 	 * Returns file on specified path with this <code>BaseIO</code> default mode
 	 * for processing.
+     * @param path The path to retrieve an {@link File} from.
+     * @return The {@link File}.
 	 */
 	public File setFile(String path) {
 		File file = null;
@@ -410,7 +448,7 @@ public class BaseIO {
  /****************************************************************************/
 
 	/**
-	 * Returns the root path of this <code>BaseIO</code> if using specified mode.
+	 * Returns the root path of this {@link BaseIO} if using specified mode.
 	 * The root path is the root where all the resources will be taken from. <p>
 	 *
 	 * For example : <br>
@@ -418,6 +456,8 @@ public class BaseIO {
 	 * The resource name = "images\background.png" <br>
 	 * The resource then will be taken from = <br>
 	 * "c:\games\spaceinvader\images\background.png"
+	 * @param mode The mode to retrieve root path for.
+	 * @return The root path of the given mode.
 	 */
 	public String getRootPath(int mode) {
 		switch (mode) {
@@ -440,7 +480,8 @@ public class BaseIO {
 	/**
 	 * Returns the official statement of specified IO mode, or
 	 * <code>[UNKNOWN-MODE]</code> if the IO mode is undefined.
-	 *
+	 * @param mode The mode to get a string representation for.
+	 * @return The {@link String} representation fo the given mode.
 	 * @see #getMode()
 	 */
 	public String getModeString(int mode) {
@@ -456,7 +497,7 @@ public class BaseIO {
 
 	/**
 	 * Returns the default IO mode used for getting the resources.
-	 *
+	 * @return The default IO mode.
 	 * @see #setMode(int)
 	 * @see #getModeString(int)
 	 */
@@ -466,20 +507,24 @@ public class BaseIO {
 
 	/**
 	 * Sets the default IO mode used for getting the resources.
-	 *
+	 * @param mode The new default io mode.
 	 * @see #getMode()
 	 * @see #CLASS_URL
 	 * @see #WORKING_DIRECTORY
 	 * @see #CLASS_LOADER
 	 * @see #SYSTEM_LOADER
 	 */
-	public void setMode(int i) {
-		mode = i;
+	public void setMode(int mode) {
+		this.mode = mode;
 	}
 
 
 	/**
 	 * Returns exception string used whenever resource can not be found.
+	 * @param path The path that was retrived.
+	 * @param mode The io mode used during the exception occured.
+	 * @param method The method the exception occured in.
+	 * @return The exception description string.
 	 */
 	protected String getException(String path, int mode, String method) {
 		return "Resource not found (" + this + "): " + getRootPath(mode) + path;
@@ -492,7 +537,7 @@ public class BaseIO {
 
 	/**
 	 * Sets the base class where the resources will be taken from.
-	 *
+	 * @param base The base {@link Class}.
 	 * @see #getBase()
 	 */
 	public void setBase(Class base) {
@@ -502,7 +547,7 @@ public class BaseIO {
 
 	/**
 	 * Returns the base class where the resources will be taken from.
-	 *
+	 * @return The base {@link Class}.
 	 * @see #setBase(Class)
 	 */
 	public Class getBase() {
@@ -510,15 +555,17 @@ public class BaseIO {
 	}
 
 	/**
-	 * Returns the class loader associated with this <code>BaseIO</code>.
-	 *
+	 * Returns the class loader associated with this {@link BaseIO}.
+	 * @return The {@link ClassLoader}.
 	 * @see #setBase(Class)
 	 */
 	public ClassLoader getLoader() {
 		return loader;
 	}
 
-
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		return super.toString() + " " +
 			"[mode=" + getModeString(this.mode) +

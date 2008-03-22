@@ -17,17 +17,26 @@
 package com.golden.gamedev;
 
 // JFC
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
 import java.util.StringTokenizer;
+
 import javax.swing.JOptionPane;
 
 // GTGE
 import com.golden.gamedev.engine.BaseGraphics;
 import com.golden.gamedev.engine.graphics.AppletMode;
 import com.golden.gamedev.engine.graphics.FullScreenMode;
-import com.golden.gamedev.engine.graphics.WindowedMode;
 import com.golden.gamedev.engine.graphics.WindowExitListener;
+import com.golden.gamedev.engine.graphics.WindowedMode;
 import com.golden.gamedev.funbox.ErrorNotificationDialog;
 
 

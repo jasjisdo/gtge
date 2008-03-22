@@ -59,6 +59,7 @@ public interface BaseGraphics {
 
     /**
      * Returns backbuffer where the rendering perform.
+     * @return The {@link Graphics2D} context used to render on the backbuffer.
      */
     public Graphics2D getBackBuffer();
 
@@ -89,17 +90,20 @@ public interface BaseGraphics {
 
     /**
 	 * Returns graphics engine dimension.
+	 * @return The size.
 	 */
     public Dimension getSize();
 
     /**
 	 * Returns the component where the rendering perform.
+	 * @return The component that is rendered on.
 	 */
     public Component getComponent();
 
 	/**
 	 * Returns graphics engine description, for example:
 	 * fullscreen, windowed, applet, fullscreen with bufferstrategy, etc.
+	 * @return The engine description.
 	 */
 	public String getGraphicsDescription();
 
@@ -108,12 +112,14 @@ public interface BaseGraphics {
 	 *
 	 * Note: Not all graphics engine support for setting window title, for
 	 * example applet graphics engine.
+	 * @param title The new window title.
 	 */
-	public void setWindowTitle(String st);
+	public void setWindowTitle(String title);
 
 	/**
 	 * Returns graphics engine window title or <code>String</code> "" if
 	 * setting window title is not supported.
+	 * @return The window title.
 	 */
 	public String getWindowTitle();
 
@@ -122,7 +128,8 @@ public interface BaseGraphics {
 	 *
 	 * Note: Not all graphics engine support for setting window icon, for
 	 * example applet graphics engine.
-	 *
+	 * 
+	 * @param icon The new window icon image.
 	 * @see com.golden.gamedev.util.ImageUtil#getImage(java.net.URL)
 	 */
 	public void setWindowIcon(Image icon);
@@ -130,6 +137,7 @@ public interface BaseGraphics {
 	/**
 	 * Returns graphics engine window icon image or <code>null</code> if
 	 * setting window icon image is not supported.
+	 * @return The window icon.
 	 */
 	public Image getWindowIcon();
 

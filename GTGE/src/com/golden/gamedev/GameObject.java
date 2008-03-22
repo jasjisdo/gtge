@@ -17,16 +17,28 @@
 package com.golden.gamedev;
 
 // JFC
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Transparency;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+
 import java.io.File;
 
 // GTGE
-import com.golden.gamedev.engine.*;
-import com.golden.gamedev.object.*;
-import com.golden.gamedev.util.Utility;
+import com.golden.gamedev.engine.BaseAudio;
+import com.golden.gamedev.engine.BaseGraphics;
+import com.golden.gamedev.engine.BaseIO;
+import com.golden.gamedev.engine.BaseInput;
+import com.golden.gamedev.engine.BaseLoader;
+import com.golden.gamedev.engine.BaseTimer;
+import com.golden.gamedev.object.Background;
+import com.golden.gamedev.object.GameFont;
+import com.golden.gamedev.object.GameFontManager;
+import com.golden.gamedev.object.Sprite;
 import com.golden.gamedev.util.ImageUtil;
+import com.golden.gamedev.util.Utility;
 
 
 /**

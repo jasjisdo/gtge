@@ -17,10 +17,13 @@
 package com.golden.gamedev.funbox;
 
 // JFC
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 
-// GTGE
 import com.golden.gamedev.Game;
 import com.golden.gamedev.GameLoader;
 import com.golden.gamedev.object.GameFont;
@@ -114,6 +117,7 @@ public class LibInfo extends Game {
 
 	/**
 	 * Main method to run this info frame.
+	 * @param args Application arguments.
 	 */
 	public static void main(String[] args) {
 		GameLoader game = new GameLoader();

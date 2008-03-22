@@ -17,16 +17,17 @@
 package com.golden.gamedev.object;
 
 // JFC
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.image.BufferedImage;
-import java.util.*;
-import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
-// GTGE
-import com.golden.gamedev.object.font.BitmapFont;
 import com.golden.gamedev.object.font.AdvanceBitmapFont;
+import com.golden.gamedev.object.font.BitmapFont;
 import com.golden.gamedev.object.font.SystemFont;
-import com.golden.gamedev.util.*;
+import com.golden.gamedev.util.ImageUtil;
+import com.golden.gamedev.util.Utility;
 
 
 /**

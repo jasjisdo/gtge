@@ -18,11 +18,9 @@ package com.golden.gamedev.object;
 
 // JFC
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.Arrays;
 import java.util.Comparator;
 
-// GTGE
 import com.golden.gamedev.util.Utility;
 
 

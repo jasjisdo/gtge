@@ -17,14 +17,27 @@
 package com.golden.gamedev.util;
 
 // JFC
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.MediaTracker;
+import java.awt.RenderingHints;
+import java.awt.Toolkit;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
-import java.net.URL;
-import java.io.File;
-import java.io.IOException;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.WeakHashMap;
+import java.io.File;
+import java.io.IOException;
+
+import java.net.URL;
+
 import javax.imageio.ImageIO;
 
 

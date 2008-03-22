@@ -134,8 +134,8 @@ public abstract class KeyCapture {
 
 	/**
 	 * Returns the key sequence key code that will be captured.
-	 *
-	 * @see java.awt.KeyEvent#VK_1
+	 * @return The captured key sequence key codes.
+	 * @see java.awt.event.KeyEvent#VK_1
 	 */
 	public int[] getKeySequence() {
 		return key;
@@ -143,6 +143,7 @@ public abstract class KeyCapture {
 
 	/**
 	 * Returns the key sequence in string.
+	 * @return The key sequence.
 	 */
 	public String getKeyString() {
 		return keyString;
@@ -151,8 +152,8 @@ public abstract class KeyCapture {
 	/**
 	 * Sets new key sequence key code.
 	 *
-	 * @param key	key sequence code
-	 * @see java.awt.KeyEvent#VK_1
+	 * @param key key sequence code
+	 * @see java.awt.event.KeyEvent#VK_1
 	 */
 	public void setKeySequence(int[] key) {
 		this.key = key;
@@ -235,7 +236,7 @@ public abstract class KeyCapture {
 	/**
 	 * The key modifiers associated with this key capture. Key modifiers is the
 	 * key that must be always pressed while typing the key sequence combination.
-	 *
+	 * @return The key modifiers.
 	 * @see #setModifiers(int)
 	 * @see #setModifiers(int[])
 	 */
@@ -287,6 +288,7 @@ public abstract class KeyCapture {
 
     /**
      * Updates key capture, this method need to be called in tight loop.
+     * @param elapsedTime The time elapsed since last call.
      */
 	public void update(long elapsedTime) {
 		if (!active) {
@@ -361,7 +363,8 @@ public abstract class KeyCapture {
  /****************************************************************************/
 
 	/**
-	 * Returns this key capture is active or not.
+	 * Returns this {@link KeyCapture} is active or not.
+	 * @return If the {@link KeyCapture} is active.
 	 */
 	public boolean isActive() {
 		return active;
@@ -369,6 +372,7 @@ public abstract class KeyCapture {
 
 	/**
 	 * Sets active state of this key capture.
+	 * @param b If the {@link KeyCapture} is active.
 	 */
 	public void setActive(boolean b) {
 		active = b;
@@ -377,6 +381,7 @@ public abstract class KeyCapture {
 
 	/**
 	 * Returns the delay time each key typing allowed in milliseconds.
+	 * @return The delay time.
 	 */
 	public int getDelayTime() {
 		return delay;
@@ -384,6 +389,7 @@ public abstract class KeyCapture {
 
 	/**
 	 * Sets the delay time each key typing allowed in milliseconds.
+	 * @param i The new delay time.
 	 */
 	public void setDelayTime(int i) {
 		delay = i;

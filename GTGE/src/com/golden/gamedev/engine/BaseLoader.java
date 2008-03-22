@@ -19,7 +19,9 @@ package com.golden.gamedev.engine;
 // JFC
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+
 import java.net.URL;
+
 import java.util.Map;
 import java.util.Iterator;
 import java.util.HashMap;
@@ -180,6 +182,8 @@ public class BaseLoader {
 
 	/**
 	 * Removes specified image from cache.
+	 * @param image The image to remove from cache.
+	 * @return If removing the image from cache worked.
 	 */
 	public boolean removeImage(BufferedImage image) {
 		Iterator it = imageBank.values().iterator();
@@ -196,6 +200,8 @@ public class BaseLoader {
 
 	/**
 	 * Removes specified images from cache.
+	 * @param images The images to remove from cache.
+	 * @return If removing the images from cache worked.
 	 */
 	public boolean removeImages(BufferedImage[] images) {
 		Iterator it = imagesBank.values().iterator();
@@ -212,6 +218,8 @@ public class BaseLoader {
 
 	/**
 	 * Removes image with specified image filename from cache.
+	 * @param imagefile The file name of the image to remove.
+	 * @return The removed image.
 	 */
 	public BufferedImage removeImage(String imagefile) {
 		return (BufferedImage) imageBank.remove(imagefile);
@@ -219,6 +227,8 @@ public class BaseLoader {
 
 	/**
 	 * Removes images with specified image filename from cache.
+	 * @param imagefile The file name of the image to remove.
+	 * @return The removed images.
 	 */
 	public BufferedImage[] removeImages(String imagefile) {
 		return (BufferedImage[]) imagesBank.remove(imagefile);
@@ -239,6 +249,8 @@ public class BaseLoader {
 
 	/**
 	 * Stores image into cache with specified key.
+	 * @param key The key used to store the image.
+	 * @param image The image to store.
 	 */
 	public void storeImage(String key, BufferedImage image) {
 		if (imageBank.get(key) != null) {
@@ -251,6 +263,8 @@ public class BaseLoader {
 
 	/**
 	 * Stores images into cache with specified key.
+	 * @param key The key used to store the images.
+	 * @param images The images to store.
 	 */
 	public void storeImages(String key, BufferedImage[] images) {
 		if (imagesBank.get(key) != null) {
@@ -263,6 +277,8 @@ public class BaseLoader {
 
 	/**
 	 * Returns cache image with specified key.
+	 * @param key The key of the image wanted.
+	 * @return The image with the given key or <code>null</code>.
 	 */
 	public BufferedImage getStoredImage(String key) {
 		return (BufferedImage) imageBank.get(key);
@@ -270,6 +286,8 @@ public class BaseLoader {
 
 	/**
 	 * Returns cache images with specified key.
+	 * @param key The key of the images wanted.
+	 * @return The images with the given key.
 	 */
 	public BufferedImage[] getStoredImages(String key) {
 		return (BufferedImage[]) imagesBank.get(key);
@@ -281,8 +299,8 @@ public class BaseLoader {
  /****************************************************************************/
 
 	/**
-	 * Returns <code>BaseIO</code> associated with this image loader.
-	 *
+	 * Returns {@link BaseIO} associated with this image loader.
+	 * @return The {@link BaseIO} used by the loader.
 	 * @see #setBaseIO(BaseIO)
 	 */
 	public BaseIO getBaseIO() {
@@ -290,7 +308,8 @@ public class BaseLoader {
 	}
 
 	/**
-	 * Sets <code>BaseIO</code> where the image resources is loaded from.
+	 * Sets {@link BaseIO} where the image resources is loaded from.
+	 * @param base The new {@link BaseIO} used by the loader.
 	 */
 	public void setBaseIO(BaseIO base) {
 		this.base = base;
@@ -298,7 +317,7 @@ public class BaseLoader {
 
     /**
      * Returns image loader masking color.
-     *
+     * @return The masking color.
      * @see #setMaskColor(Color)
      */
 	public Color getMaskColor() {
@@ -310,13 +329,16 @@ public class BaseLoader {
 	 *
 	 * Masking color is the color of the images that will be converted to
 	 * transparent.
-	 *
+	 * @param c The new masking color.
 	 * @see #getMaskColor()
 	 */
 	public void setMaskColor(Color c) {
 		maskColor = c;
 	}
 
+	/**
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		StringBuffer imageKey = new StringBuffer(),
 					 imagesKey = new StringBuffer();

@@ -23,7 +23,6 @@ import java.awt.image.VolatileImage;
 
 import com.golden.gamedev.engine.BaseGraphics;
 import com.golden.gamedev.object.background.TileBackground;
-import com.golden.gamedev.object.background.abstraction.AbstractTileBackground;
 
 public class CachedTileBackground extends TileBackground {
 

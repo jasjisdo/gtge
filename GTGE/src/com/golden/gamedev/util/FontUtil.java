@@ -17,10 +17,17 @@
 package com.golden.gamedev.util;
 
 // JFC
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
-import java.net.URL;
+
 import java.io.IOException;
+
+import java.net.URL;
 
 
 /**

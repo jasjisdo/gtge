@@ -17,9 +17,9 @@
 package com.golden.gamedev.object.background;
 
 // JFC
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
-// GTGE
 import com.golden.gamedev.object.Background;
 
 

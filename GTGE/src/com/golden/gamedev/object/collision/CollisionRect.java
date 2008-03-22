@@ -16,8 +16,6 @@
  */
 package com.golden.gamedev.object.collision;
 
-// JFC
-import java.awt.Rectangle;
 
 
 /**

@@ -187,9 +187,14 @@ public abstract class AbstractIsometricBackground extends Background {
 	/**
 	 * Renders tile at <code>tileX</code>, <code>tileY</code> position to
 	 * specified <code>x</code>, <code>y</code> coordinate.
+	 * @param g The {@link Graphics2D} context used for rendering.
+	 * @param tileX The tile x location.
+	 * @param tileY The tile y location.
+	 * @param x The x location.
+	 * @param y The y location.
 	 */
 	public abstract void renderTile(Graphics2D g,
-					 	   			int tileX, int tileY,
+									int tileX, int tileY,
 									int x, int y);
 
 
@@ -197,6 +202,9 @@ public abstract class AbstractIsometricBackground extends Background {
  /************************** BACKGROUND POSITION *****************************/
  /****************************************************************************/
 
+    /**
+     * @see com.golden.gamedev.object.Background#setLocation(double, double)
+     */
     public void setLocation(double xb, double yb) {
 		int oldx = (int) getX(), oldy = (int) getY();
 
@@ -219,6 +227,8 @@ public abstract class AbstractIsometricBackground extends Background {
 
     /**
      * Sets the background location to specified tile.
+     * @param xs 
+     * @param ys 
      */
 	public void setTileLocation(int xs, int ys) {
 		Point p = getCoordinateAt(xs, ys);
@@ -228,6 +238,7 @@ public abstract class AbstractIsometricBackground extends Background {
 
 	/**
 	 * Returns current tile-x position.
+	 * @return The tile x location.
 	 */
 	public int getTileX() {
 		return tileX;
@@ -235,6 +246,7 @@ public abstract class AbstractIsometricBackground extends Background {
 
 	/**
 	 * Returns current tile-y position.
+	 * @return The tile y location.
 	 */
 	public int getTileY() {
 		return tileY;
@@ -270,6 +282,9 @@ public abstract class AbstractIsometricBackground extends Background {
 	 *
 	 *    }
 	 * </pre>
+	 * @param screenX The x location on screen.
+	 * @param screenY The y location on screen.
+	 * @return The tile at the given location.
 	 */
 	public Point getTileAt(double screenX, double screenY) {
 		if (screenX < getClip().x || screenX > getClip().x + getClip().width ||

@@ -17,11 +17,13 @@
 package com.golden.gamedev.object.font;
 
 // JFC
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 
-// GTGE
-import com.golden.gamedev.util.ImageUtil;
 import com.golden.gamedev.object.GameFont;
+import com.golden.gamedev.util.ImageUtil;
 
 
 /**

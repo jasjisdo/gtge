@@ -88,6 +88,7 @@ public interface BaseTimer {
 
 	/**
 	 * Returns timer current time in milliseconds.
+	 * @return The current time.
 	 */
 	public long getTime();
 
@@ -105,7 +106,7 @@ public interface BaseTimer {
 	 * Returns whether the timer is currently running or not. <p>
 	 *
 	 * Timer is running when {@link #startTimer()} is called.
-	 *
+	 * @return If the timer is running.
 	 * @see #startTimer()
 	 */
 	public boolean isRunning();

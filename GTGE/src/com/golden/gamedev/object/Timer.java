@@ -16,6 +16,8 @@
  */
 package com.golden.gamedev.object;
 
+import java.io.Serializable;
+
 
 /**
  * Class to manage timing in GTGE Frame Work to create game independent of frame
@@ -41,7 +43,7 @@ package com.golden.gamedev.object;
  * }
  * </pre>
  */
-public class Timer implements java.io.Serializable {
+public class Timer implements Serializable {
 
 
  /*************************** TIMER VARIABLES ********************************/

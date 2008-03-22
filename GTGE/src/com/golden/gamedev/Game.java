@@ -17,22 +17,52 @@
 package com.golden.gamedev;
 
 // JFC
-import java.awt.*;
-import java.awt.image.*;
-import java.awt.color.*;
-import java.awt.event.*;
-import java.io.*;
-import java.net.*;
-import java.applet.*;
+import java.applet.Applet;
+
+import java.awt.AlphaComposite;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.Transparency;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
+import java.io.File;
+
+import java.net.URL;
 
 // GTGE
-import com.golden.gamedev.engine.*;
-import com.golden.gamedev.engine.timer.*;
-import com.golden.gamedev.engine.audio.*;
-import com.golden.gamedev.engine.input.*;
-import com.golden.gamedev.object.*;
-import com.golden.gamedev.util.*;
-import com.golden.gamedev.funbox.*;
+import com.golden.gamedev.engine.BaseAudio;
+import com.golden.gamedev.engine.BaseGraphics;
+import com.golden.gamedev.engine.BaseIO;
+import com.golden.gamedev.engine.BaseInput;
+import com.golden.gamedev.engine.BaseLoader;
+import com.golden.gamedev.engine.BaseTimer;
+import com.golden.gamedev.engine.audio.MidiRenderer;
+import com.golden.gamedev.engine.audio.WaveRenderer;
+import com.golden.gamedev.engine.input.AWTInput;
+import com.golden.gamedev.engine.timer.SystemTimer;
+
+import com.golden.gamedev.funbox.ErrorNotificationDialog;
+
+import com.golden.gamedev.object.Background;
+import com.golden.gamedev.object.GameFont;
+import com.golden.gamedev.object.GameFontManager;
+import com.golden.gamedev.object.PlayField;
+import com.golden.gamedev.object.Sprite;
+import com.golden.gamedev.object.SpriteGroup;
+
+import com.golden.gamedev.util.ImageUtil;
+import com.golden.gamedev.util.Utility;
 
 
 /**

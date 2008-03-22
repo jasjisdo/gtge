@@ -108,11 +108,13 @@ public abstract class BaseAudioRenderer {
 
 	/**
 	 * Plays sound with specified audio file.
+	 * @param audiofile The audio file to play.
 	 */
 	protected abstract void playSound(URL audiofile);
 
 	/**
 	 * Replays last played sound.
+	 * @param audiofile The audio file to replay.
 	 */
 	protected abstract void replaySound(URL audiofile);
 
@@ -123,6 +125,8 @@ public abstract class BaseAudioRenderer {
 
 	/**
 	 * Sets audio sound volume.
+	 * @param volume The new volume. The volume can be a value between 
+     * 0.0f (min volume) and 1.0f (max volume).
 	 */
 	protected void setSoundVolume(float volume) {
 	}
@@ -181,6 +185,7 @@ public abstract class BaseAudioRenderer {
 
 	/**
 	 * Returns whether the audio is playing continuosly or not.
+	 * @return If the audio is played continuosly.
 	 */
 	public boolean isLoop() {
 		return loop;
@@ -192,7 +197,9 @@ public abstract class BaseAudioRenderer {
  /****************************************************************************/
 
 	/**
-	 * Sets audio volume in [0.0f - 1.0f].
+	 * Sets audio volume.
+	 * @param volume The new volume. The volume can be a value between 
+	 * 0.0f (min volume) and 1.0f (max volume).
 	 */
 	public void setVolume(float volume) {
 		if (volume < 0.0f) volume = 0.0f;
@@ -207,6 +214,8 @@ public abstract class BaseAudioRenderer {
 
 	/**
 	 * Returns audio volume.
+	 * @return The volume. The value can lay between 0.0f and 1.0f
+	 * @see #setVolume(float)
 	 */
 	public float getVolume() {
 		return volume;
@@ -214,6 +223,7 @@ public abstract class BaseAudioRenderer {
 
 	/**
 	 * Returns whether setting audio volume is supported or not.
+	 * @return If setting the volume is supported.
 	 */
 	public boolean isVolumeSupported() {
 		return true;
@@ -226,6 +236,7 @@ public abstract class BaseAudioRenderer {
 
 	/**
 	 * Returns the audio resource URL associated with this audio renderer.
+	 * @return The URL of the audio resource associated.
 	 */
 	public URL getAudioFile() {
 		return audiofile;
@@ -233,6 +244,11 @@ public abstract class BaseAudioRenderer {
 
 	/**
 	 * Returns the audio renderer status.
+	 * @return The status.
+	 * @see #PLAYING
+	 * @see #STOPPED
+	 * @see #END_OF_SOUND
+	 * @see #ERROR
 	 */
 	public int getStatus() {
 		return status;
@@ -241,6 +257,7 @@ public abstract class BaseAudioRenderer {
 	/**
 	 * Returns true, if this audio renderer is available to use or false if this
 	 * renderer is not available to use (failed to initialized).
+	 * @return If the renderer is available for use or not.
 	 */
 	public abstract boolean isAvailable();
 
