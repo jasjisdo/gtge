@@ -23,20 +23,26 @@
 package com.golden.gamedev.engine.network;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class NetworkException extends java.io.IOException {
 	
 	/**
-	 * Creates a new instance of <code>NetworkException</code> without detail message.
+	 * 
+	 */
+	private static final long serialVersionUID = 4996531508477520066L;
+	
+	/**
+	 * Creates a new instance of <code>NetworkException</code> without detail
+	 * message.
 	 */
 	public NetworkException() {
 	}
 	
-	
 	/**
-	 * Constructs an instance of <code>NetworkException</code> with the specified detail message.
+	 * Constructs an instance of <code>NetworkException</code> with the
+	 * specified detail message.
 	 * @param msg the detail message.
 	 */
 	public NetworkException(String msg) {

@@ -21,65 +21,64 @@ import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.util.BitSet;
 
-
 public class EnhancedAWTInput extends AWTInput {
-
-
+	
 	private BitSet keyDown;
-
-
+	
 	public EnhancedAWTInput(Component comp) {
 		super(comp);
-
-		keyDown = new BitSet();
+		
+		this.keyDown = new BitSet();
 	}
-
+	
 	protected InputListener createInputListener() {
 		return new EnhancedInputListener();
 	}
-
+	
 	public void refresh() {
 		super.refresh();
-
-		keyDown.clear();
+		
+		this.keyDown.clear();
 	}
-
+	
 	public boolean[] getKeyDown() {
 		throw new UnsupportedOperationException(
-			"Enhanced AWT Input use BitSet boolean, " +
-			"use getKeyDownBitSet() instead.");
+		        "Enhanced AWT Input use BitSet boolean, "
+		                + "use getKeyDownBitSet() instead.");
 	}
-
+	
 	public BitSet getKeyDownBitSet() {
-		return keyDown;
+		return this.keyDown;
 	}
-
-    public boolean isKeyDown(int keyCode) {
-		return keyDown.get(keyCode);
+	
+	public boolean isKeyDown(int keyCode) {
+		return this.keyDown.get(keyCode);
 	}
-
+	
 	protected class EnhancedInputListener extends InputListener {
-
+		
 		public void keyPressed(KeyEvent e) {
-			if (!keyDown.get(e.getKeyCode())) {
-				keyDown.set(e.getKeyCode());
-
-				keyPressed[pressedKey] = e.getKeyCode();
-				pressedKey++;
+			if (!EnhancedAWTInput.this.keyDown.get(e.getKeyCode())) {
+				EnhancedAWTInput.this.keyDown.set(e.getKeyCode());
+				
+				EnhancedAWTInput.this.keyPressed[EnhancedAWTInput.this.pressedKey] = e
+				        .getKeyCode();
+				EnhancedAWTInput.this.pressedKey++;
 			}
-
+			
 			e.consume();
 		}
-
+		
 		public void keyReleased(KeyEvent e) {
-			keyDown.clear(e.getKeyCode());
-
-			keyReleased[releasedKey] = e.getKeyCode();
-			releasedKey++;
-
+			EnhancedAWTInput.this.keyDown.clear(e.getKeyCode());
+			
+			EnhancedAWTInput.this.keyReleased[EnhancedAWTInput.this.releasedKey] = e
+			        .getKeyCode();
+			EnhancedAWTInput.this.releasedKey++;
+			
 			e.consume();
 		}
-
+		
 	}
-
+	
 }

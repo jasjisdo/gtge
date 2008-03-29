@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- *
+ * 
  * @author Kevin
  */
 public class PipedOutputStream extends OutputStream {
@@ -32,7 +32,6 @@ public class PipedOutputStream extends OutputStream {
 		
 	}
 	
-	
 	public void connect(PipedInputStream input) {
 		this.input = input;
 	}
@@ -41,17 +40,17 @@ public class PipedOutputStream extends OutputStream {
 	 * @see java.io.OutputStream#write(int)
 	 */
 	public void write(int b) throws IOException {
-		input.receive(b);
+		this.input.receive(b);
 	}
-
+	
 	public void write(byte[] b, int off, int len) throws IOException {
-		for (int i=off;i<off+len;i++) {
-			write(b[i]);
+		for (int i = off; i < off + len; i++) {
+			this.write(b[i]);
 		}
 	}
-
+	
 	public void write(byte[] b) throws IOException {
-		write(b,0,b.length);
+		this.write(b, 0, b.length);
 	}
-
+	
 }

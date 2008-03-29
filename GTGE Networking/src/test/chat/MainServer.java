@@ -24,17 +24,17 @@ package test.chat;
 
 // JFC
 import java.io.IOException;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import com.golden.gamedev.engine.network.tcp.TCPServer;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class MainServer {
-
 	
 	/**
 	 * @param args the command line arguments
@@ -42,41 +42,42 @@ public class MainServer {
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ex) { }
-		
+		}
+		catch (Exception ex) {
+		}
 		
 		// the port to be used
 		String port = JOptionPane.showInputDialog("Server Port :", "11137");
-		if (port == null) System.exit(0);
+		if (port == null) {
+			System.exit(0);
+		}
 		
 		int portNumber = 0;
 		
 		try {
 			portNumber = Integer.parseInt(port);
-		} catch (NumberFormatException ex) {
+		}
+		catch (NumberFormatException ex) {
 			ex.printStackTrace();
 			System.exit(-1);
 		}
-		
 		
 		// create the server
 		TCPServer server = null;
 		try {
 			server = new TCPServer(portNumber);
-//			server.setMaxClients(2);
+			// server.setMaxClients(2);
 			
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
 			
-			JOptionPane.showMessageDialog(null, 
-				"Connection Failed.\n" +
-				"Caused by:\n" + ex.getMessage(), 
-				"Connection Failed", JOptionPane.ERROR_MESSAGE
-			);
+			JOptionPane.showMessageDialog(null, "Connection Failed.\n"
+			        + "Caused by:\n" + ex.getMessage(), "Connection Failed",
+			        JOptionPane.ERROR_MESSAGE);
 			
 			System.exit(-1);
 		}
-		
 		
 		// show the ui
 		new ServerGUI(server).setVisible(true);

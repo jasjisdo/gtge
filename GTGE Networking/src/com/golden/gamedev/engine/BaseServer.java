@@ -34,249 +34,290 @@ import com.golden.gamedev.engine.network.NetworkPacket;
 import com.golden.gamedev.engine.network.NetworkUtil;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public abstract class BaseServer {
 	
-	private final BaseClient[]	nullClient				= new BaseClient[0];
-	private final BaseClient[]	connectingClients1		= new BaseClient[1];
-	private final BaseClient[]	connectingClients2		= new BaseClient[2];
-	private final BaseClient[]	disconnectedClients1	= new BaseClient[1];
-	private final BaseClient[]	disconnectedClients2	= new BaseClient[2];
-	private final BaseClient[]	clientReceivedPackets1	= new BaseClient[1];
-	private final BaseClient[]	clientReceivedPackets2	= new BaseClient[2];
+	private final BaseClient[] nullClient = new BaseClient[0];
+	private final BaseClient[] connectingClients1 = new BaseClient[1];
+	private final BaseClient[] connectingClients2 = new BaseClient[2];
+	private final BaseClient[] disconnectedClients1 = new BaseClient[1];
+	private final BaseClient[] disconnectedClients2 = new BaseClient[2];
+	private final BaseClient[] clientReceivedPackets1 = new BaseClient[1];
+	private final BaseClient[] clientReceivedPackets2 = new BaseClient[2];
 	
-	private final String[]		nullString				= new String[0];
-
+	private final String[] nullString = new String[0];
 	
-	private BaseClient[]	connectingClients			= nullClient;
-	private BaseClient[]	clients						= nullClient;
-	private BaseClient[]	disconnectedClients			= nullClient;
+	private BaseClient[] connectingClients = this.nullClient;
+	private BaseClient[] clients = this.nullClient;
+	private BaseClient[] disconnectedClients = this.nullClient;
 	
-	private BaseClient[]	receivedPacketClients		= nullClient;
-	private List			listReceivedPacketClients	= new ArrayList();
-
-	private Map				clientGroups				= new HashMap();
-		
-	private short			uniqueClientID				= 0;
+	private BaseClient[] receivedPacketClients = this.nullClient;
+	private List listReceivedPacketClients = new ArrayList();
 	
+	private Map clientGroups = new HashMap();
 	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	private short uniqueClientID = 0;
+	
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	/** Creates a new instance of BaseServer */
 	public BaseServer() {
 	}
-
 	
 	public void update(long elapsedTime) throws IOException {
 		// clear all connecting and disconnected clients
-		if (connectingClients.length > 0) {
-			for (int i=0;i < connectingClients.length;i++) {
-				if (connectingClients[i].isConnected()) {
-					addClient(connectingClients[i]);				
+		if (this.connectingClients.length > 0) {
+			for (int i = 0; i < this.connectingClients.length; i++) {
+				if (this.connectingClients[i].isConnected()) {
+					this.addClient(this.connectingClients[i]);
 				}
 			}
 			
-			connectingClients = nullClient;
-		}
-
-		if (disconnectedClients.length > 0) {
-			disconnectedClients = nullClient;
+			this.connectingClients = this.nullClient;
 		}
 		
+		if (this.disconnectedClients.length > 0) {
+			this.disconnectedClients = this.nullClient;
+		}
 		
 		// clear all consumed received packet client
-		if (receivedPacketClients.length > 0) {
-			for (int i=0;i < receivedPacketClients.length;i++) {
-				receivedPacketClients[i].clearConsumedPacket();
+		if (this.receivedPacketClients.length > 0) {
+			for (int i = 0; i < this.receivedPacketClients.length; i++) {
+				this.receivedPacketClients[i].clearConsumedPacket();
 				
-				if (receivedPacketClients[i].getReceivedPackets().length > 0) {
-					listReceivedPacketClients.add(receivedPacketClients[i]);
+				if (this.receivedPacketClients[i].getReceivedPackets().length > 0) {
+					this.listReceivedPacketClients
+					        .add(this.receivedPacketClients[i]);
 				}
 			}
 			
-			if (listReceivedPacketClients.size() == 0) {
-				receivedPacketClients = nullClient;
+			if (this.listReceivedPacketClients.size() == 0) {
+				this.receivedPacketClients = this.nullClient;
 				
-			} else {
-				if (listReceivedPacketClients.size() == 1) {
-					receivedPacketClients = (BaseClient[]) listReceivedPacketClients.toArray(clientReceivedPackets1);
+			}
+			else {
+				if (this.listReceivedPacketClients.size() == 1) {
+					this.receivedPacketClients = (BaseClient[]) this.listReceivedPacketClients
+					        .toArray(this.clientReceivedPackets1);
 					
-				} else if (listReceivedPacketClients.size() == 2) {
-					receivedPacketClients = (BaseClient[]) listReceivedPacketClients.toArray(clientReceivedPackets2);
+				}
+				else if (this.listReceivedPacketClients.size() == 2) {
+					this.receivedPacketClients = (BaseClient[]) this.listReceivedPacketClients
+					        .toArray(this.clientReceivedPackets2);
 					
-				} else {
-					receivedPacketClients = (BaseClient[]) listReceivedPacketClients.toArray(nullClient);
+				}
+				else {
+					this.receivedPacketClients = (BaseClient[]) this.listReceivedPacketClients
+					        .toArray(this.nullClient);
 				}
 				
-				listReceivedPacketClients.clear();
+				this.listReceivedPacketClients.clear();
 			}
 		}
 	}
 	
 	protected void broadcastPacket(byte[] packet) {
-		for (int i=0;i < clients.length;i++) {
+		for (int i = 0; i < this.clients.length; i++) {
 			try {
-				clients[i].sendPacket(packet);
-			} catch (IOException ex) {
-				removeClient(clients[i]);
+				this.clients[i].sendPacket(packet);
+			}
+			catch (IOException ex) {
+				this.removeClient(this.clients[i]);
 			}
 		}
 	}
+	
 	protected void broadcastPacket(byte[] packet, BaseClient except) {
-		for (int i=0;i < clients.length;i++) {
-			if (clients[i] == except) continue;
-
+		for (int i = 0; i < this.clients.length; i++) {
+			if (this.clients[i] == except) {
+				continue;
+			}
+			
 			try {
-				clients[i].sendPacket(packet);
-			} catch (IOException ex) {
-				removeClient(clients[i]);
+				this.clients[i].sendPacket(packet);
+			}
+			catch (IOException ex) {
+				this.removeClient(this.clients[i]);
 			}
 		}
 	}
+	
 	protected void broadcastPacket(byte[] packet, String group) {
-		BaseClient[] clients = getClients(group);
-
-		for (int i=0;i < clients.length;i++) {
-			try {
-				clients[i].sendPacket(packet);
-
-			} catch (IOException ex) {
-				ex.printStackTrace();
-				removeClient(clients[i]);
-			}
-		}
-	}
-	protected void broadcastPacket(byte[] packet, String group, BaseClient except) {
-		BaseClient[] clients = getClients(group);
-
-		for (int i=0;i < clients.length;i++) {
-			if (clients[i] == except) continue;
-
+		BaseClient[] clients = this.getClients(group);
+		
+		for (int i = 0; i < clients.length; i++) {
 			try {
 				clients[i].sendPacket(packet);
 				
-			} catch (IOException ex) {
-				removeClient(clients[i]);
 			}
-		}			
-	}
-	protected void broadcastPacketExcept(byte[] packet, String group) {
-		BaseClient[] clients = getClients(group);
-
-		for (int i=0;i < clients.length;i++) {
-			try {
-				clients[i].sendPacket(packet);
-
-			} catch (IOException ex) {
-				removeClient(clients[i]);
+			catch (IOException ex) {
+				ex.printStackTrace();
+				this.removeClient(clients[i]);
 			}
 		}
 	}
-	protected void broadcastPacketExcept(byte[] packet, String group, BaseClient except) {
-		BaseClient[] clients = getClients(group);
-
-		for (int i=0;i < clients.length;i++) {
-			if (clients[i] == except) continue;
-
+	
+	protected void broadcastPacket(byte[] packet, String group, BaseClient except) {
+		BaseClient[] clients = this.getClients(group);
+		
+		for (int i = 0; i < clients.length; i++) {
+			if (clients[i] == except) {
+				continue;
+			}
+			
 			try {
 				clients[i].sendPacket(packet);
-
-			} catch (IOException ex) {
-				removeClient(clients[i]);
+				
 			}
-		}			
+			catch (IOException ex) {
+				this.removeClient(clients[i]);
+			}
+		}
 	}
-
+	
+	protected void broadcastPacketExcept(byte[] packet, String group) {
+		BaseClient[] clients = this.getClients(group);
+		
+		for (int i = 0; i < clients.length; i++) {
+			try {
+				clients[i].sendPacket(packet);
+				
+			}
+			catch (IOException ex) {
+				this.removeClient(clients[i]);
+			}
+		}
+	}
+	
+	protected void broadcastPacketExcept(byte[] packet, String group, BaseClient except) {
+		BaseClient[] clients = this.getClients(group);
+		
+		for (int i = 0; i < clients.length; i++) {
+			if (clients[i] == except) {
+				continue;
+			}
+			
+			try {
+				clients[i].sendPacket(packet);
+				
+			}
+			catch (IOException ex) {
+				this.removeClient(clients[i]);
+			}
+		}
+	}
+	
 	public byte[] pack(NetworkPacket packet) throws IOException {
 		return NetworkConfig.getPacketManager().pack(packet);
 	}
 	
 	public void broadcastPacket(NetworkPacket packet) throws IOException {
-		broadcastPacket(NetworkConfig.getPacketManager().pack(packet));
+		this.broadcastPacket(NetworkConfig.getPacketManager().pack(packet));
 	}
-	public void broadcastPacket(NetworkPacket packet, BaseClient except) throws IOException {
-		broadcastPacket(NetworkConfig.getPacketManager().pack(packet), except);
+	
+	public void broadcastPacket(NetworkPacket packet, BaseClient except)
+	        throws IOException {
+		this.broadcastPacket(NetworkConfig.getPacketManager().pack(packet),
+		        except);
 	}
-	public void broadcastPacket(NetworkPacket packet, String group) throws IOException {
-		broadcastPacket(NetworkConfig.getPacketManager().pack(packet), group);
+	
+	public void broadcastPacket(NetworkPacket packet, String group)
+	        throws IOException {
+		this.broadcastPacket(NetworkConfig.getPacketManager().pack(packet),
+		        group);
 	}
-	public void broadcastPacket(NetworkPacket packet, String group, BaseClient except) throws IOException {
-		broadcastPacket(NetworkConfig.getPacketManager().pack(packet), group, except);
+	
+	public void broadcastPacket(NetworkPacket packet, String group, BaseClient except)
+	        throws IOException {
+		this.broadcastPacket(NetworkConfig.getPacketManager().pack(packet),
+		        group, except);
 	}
-	public void broadcastPacketExcept(NetworkPacket packet, String exceptGroup) throws IOException {
-		broadcastPacketExcept(NetworkConfig.getPacketManager().pack(packet), exceptGroup);
+	
+	public void broadcastPacketExcept(NetworkPacket packet, String exceptGroup)
+	        throws IOException {
+		this.broadcastPacketExcept(NetworkConfig.getPacketManager()
+		        .pack(packet), exceptGroup);
 	}
-	public void broadcastPacketExcept(NetworkPacket packet, String exceptGroup, BaseClient except) throws IOException {
-		broadcastPacketExcept(NetworkConfig.getPacketManager().pack(packet), exceptGroup, except);
+	
+	public void broadcastPacketExcept(NetworkPacket packet, String exceptGroup, BaseClient except)
+	        throws IOException {
+		this.broadcastPacketExcept(NetworkConfig.getPacketManager()
+		        .pack(packet), exceptGroup, except);
 	}
 	
 	private void checkNullPacketManager() {
 		if (NetworkConfig.getPacketManager() != null) {
 			throw new RuntimeException(
-				"The PacketManager is exists, can not send raw packet.\n" +
-				"Call NetworkConfiguration.setPacketManager(null) before sending raw packet.");
+			        "The PacketManager is exists, can not send raw packet.\n"
+			                + "Call NetworkConfiguration.setPacketManager(null) before sending raw packet.");
 		}
 	}
+	
 	public void broadcastRawPacket(byte[] packet) {
-		checkNullPacketManager();
-		broadcastPacket(packet);
+		this.checkNullPacketManager();
+		this.broadcastPacket(packet);
 	}
+	
 	public void broadcastRawPacket(byte[] packet, BaseClient except) {
-		checkNullPacketManager();
-		broadcastPacket(packet, except);
+		this.checkNullPacketManager();
+		this.broadcastPacket(packet, except);
 	}
+	
 	public void broadcastRawPacket(byte[] packet, String group) {
-		checkNullPacketManager();
-		broadcastPacket(packet, group);
+		this.checkNullPacketManager();
+		this.broadcastPacket(packet, group);
 	}
+	
 	public void broadcastRawPacket(byte[] packet, String group, BaseClient except) {
-		checkNullPacketManager();
-		broadcastPacket(packet, group, except);
+		this.checkNullPacketManager();
+		this.broadcastPacket(packet, group, except);
 	}
+	
 	public void broadcastRawPacketExcept(byte[] packet, String exceptGroup) {
-		checkNullPacketManager();
-		broadcastPacketExcept(packet, exceptGroup);
+		this.checkNullPacketManager();
+		this.broadcastPacketExcept(packet, exceptGroup);
 	}
+	
 	public void broadcastRawPacketExcept(byte[] packet, String exceptGroup, BaseClient except) {
-		checkNullPacketManager();
-		broadcastPacketExcept(packet, exceptGroup, except);
+		this.checkNullPacketManager();
+		this.broadcastPacketExcept(packet, exceptGroup, except);
 	}
 	
 	protected abstract void disconnectImpl() throws IOException;
 	
 	public void disconnect() throws IOException {
-		for (int i=0;i < clients.length;i++) {
-			clients[i].disconnect();
+		for (int i = 0; i < this.clients.length; i++) {
+			this.clients[i].disconnect();
 		}
-
-		disconnectImpl();
+		
+		this.disconnectImpl();
 	}
 	
-	
 	protected void addClient(BaseClient client) {
-//		if (clients.contains(client)) {
-//			throw new RuntimeException("Client " + client.getDetail() + " is already exists");
-//		}
-
-		clients = (BaseClient[]) NetworkUtil.expand(clients, 1);
-		clients[clients.length-1] = client;
+		// if (clients.contains(client)) {
+		// throw new RuntimeException("Client " + client.getDetail() + " is
+		// already exists");
+		// }
+		
+		this.clients = (BaseClient[]) NetworkUtil.expand(this.clients, 1);
+		this.clients[this.clients.length - 1] = client;
 	}
 	
 	public boolean removeClient(BaseClient client) {
 		boolean exists = false;
-
+		
 		// make sure this client connection must be closed before removal
 		client.silentDisconnect();
-			
 		
 		// remove from connecting list
-		for (int i=0;i < connectingClients.length;i++) {
-			if (connectingClients[i] == client) {
-				connectingClients = (BaseClient[]) NetworkUtil.cut(connectingClients, i);
+		for (int i = 0; i < this.connectingClients.length; i++) {
+			if (this.connectingClients[i] == client) {
+				this.connectingClients = (BaseClient[]) NetworkUtil.cut(
+				        this.connectingClients, i);
 				exists = true;
 				break;
 			}
@@ -284,33 +325,37 @@ public abstract class BaseServer {
 		
 		// remove from client list
 		if (!exists) {
-			for (int i=0;i < clients.length;i++) {
-				if (clients[i] == client) {
-					clients = (BaseClient[]) NetworkUtil.cut(clients, i);
+			for (int i = 0; i < this.clients.length; i++) {
+				if (this.clients[i] == client) {
+					this.clients = (BaseClient[]) NetworkUtil.cut(this.clients,
+					        i);
 					exists = true;
 					break;
 				}
 			}
 		}
-				
+		
 		if (exists) {
 			if (NetworkConfig.DEBUG) {
 				System.out.println("========================");
-				System.out.println("DISCONNECTED: " + client.getClientID() + " - " + client.getCompleteDetail());
+				System.out.println("DISCONNECTED: " + client.getClientID()
+				        + " - " + client.getCompleteDetail());
 				System.out.println("========================");
 			}
 			
 			// remove from group list
-//			client.setGroupName(null);
+			// client.setGroupName(null);
 			String group = client.getGroupName();
 			if (group != null) {
-				BaseClient[] groups = (BaseClient[]) clientGroups.get(group);
+				BaseClient[] groups = (BaseClient[]) this.clientGroups
+				        .get(group);
 				
 				if (groups != null) {
 					// remove from old group
-					for (int i=0;i < groups.length;i++) {
+					for (int i = 0; i < groups.length; i++) {
 						if (groups[i] == client) {
-							clientGroups.put(group, NetworkUtil.cut(groups, i));
+							this.clientGroups.put(group, NetworkUtil.cut(
+							        groups, i));
 							break;
 						}
 					}
@@ -318,36 +363,40 @@ public abstract class BaseServer {
 			}
 			
 			// remove from received packet list
-			for (int i=0;i < receivedPacketClients.length;i++) {
-				if (receivedPacketClients[i] == client) {
-					receivedPacketClients = (BaseClient[]) NetworkUtil.cut(receivedPacketClients, i);
+			for (int i = 0; i < this.receivedPacketClients.length; i++) {
+				if (this.receivedPacketClients[i] == client) {
+					this.receivedPacketClients = (BaseClient[]) NetworkUtil
+					        .cut(this.receivedPacketClients, i);
 					break;
 				}
 			}
 			
-
-			if (disconnectedClients == nullClient) {
-				disconnectedClients		= disconnectedClients1;
-				disconnectedClients[0]	= client;
-
-			} else if (disconnectedClients == disconnectedClients1) {
-				disconnectedClients		= disconnectedClients2;
-				disconnectedClients[0]	= disconnectedClients1[0];
-				disconnectedClients[1]	= client;
-
-			} else {
-				disconnectedClients = (BaseClient[]) NetworkUtil.expand(disconnectedClients, 1);
-				disconnectedClients[disconnectedClients.length-1] = client;
+			if (this.disconnectedClients == this.nullClient) {
+				this.disconnectedClients = this.disconnectedClients1;
+				this.disconnectedClients[0] = client;
+				
+			}
+			else if (this.disconnectedClients == this.disconnectedClients1) {
+				this.disconnectedClients = this.disconnectedClients2;
+				this.disconnectedClients[0] = this.disconnectedClients1[0];
+				this.disconnectedClients[1] = client;
+				
+			}
+			else {
+				this.disconnectedClients = (BaseClient[]) NetworkUtil.expand(
+				        this.disconnectedClients, 1);
+				this.disconnectedClients[this.disconnectedClients.length - 1] = client;
 			}
 		}
 		
 		return exists;
 	}
-
+	
 	public void removeDisconnectedClient(BaseClient client) {
-		for (int i=0;i < disconnectedClients.length;i++) {
-			if (disconnectedClients[i] == client) {
-				disconnectedClients = (BaseClient[]) NetworkUtil.cut(disconnectedClients, i);
+		for (int i = 0; i < this.disconnectedClients.length; i++) {
+			if (this.disconnectedClients[i] == client) {
+				this.disconnectedClients = (BaseClient[]) NetworkUtil.cut(
+				        this.disconnectedClients, i);
 				break;
 			}
 		}
@@ -355,13 +404,15 @@ public abstract class BaseServer {
 	
 	protected void changeGroup(BaseClient client, String fromGroup, String toGroup) {
 		if (fromGroup != null) {
-			BaseClient[] groups = (BaseClient[]) clientGroups.get(fromGroup);
+			BaseClient[] groups = (BaseClient[]) this.clientGroups
+			        .get(fromGroup);
 			
 			if (groups != null) {
 				// remove from old group
-				for (int i=0;i < groups.length;i++) {
+				for (int i = 0; i < groups.length; i++) {
 					if (groups[i] == client) {
-						clientGroups.put(fromGroup, NetworkUtil.cut(groups, i));
+						this.clientGroups.put(fromGroup, NetworkUtil.cut(
+						        groups, i));
 						break;
 					}
 				}
@@ -370,104 +421,106 @@ public abstract class BaseServer {
 		
 		if (toGroup != null) {
 			// add to new group
-			BaseClient[] groups = (BaseClient[]) clientGroups.get(toGroup);
+			BaseClient[] groups = (BaseClient[]) this.clientGroups.get(toGroup);
 			
 			if (groups != null && groups.length > 0) {
 				groups = (BaseClient[]) NetworkUtil.expand(groups, 1);
-				groups[groups.length-1] = client;
-
-			} else {
+				groups[groups.length - 1] = client;
+				
+			}
+			else {
 				groups = new BaseClient[1];
 				groups[0] = client;
 			}
-
-			clientGroups.put(toGroup, groups);
+			
+			this.clientGroups.put(toGroup, groups);
 		}
 	}
-
 	
 	protected void addConnectingClient(BaseClient client) throws IOException {
-		short clientID = getUniqueClientID();
+		short clientID = this.getUniqueClientID();
 		client.setClientID(clientID);
 		client.sendPacket(String.valueOf(clientID).getBytes());
 		
-		if (connectingClients == nullClient) {
-			connectingClients		= connectingClients1;
-			connectingClients[0]	= client;
+		if (this.connectingClients == this.nullClient) {
+			this.connectingClients = this.connectingClients1;
+			this.connectingClients[0] = client;
 			
-		} else if (connectingClients == connectingClients1) {
-			connectingClients		= connectingClients2;
-			connectingClients[0]	= connectingClients1[0];
-			connectingClients[1]	= client;
+		}
+		else if (this.connectingClients == this.connectingClients1) {
+			this.connectingClients = this.connectingClients2;
+			this.connectingClients[0] = this.connectingClients1[0];
+			this.connectingClients[1] = client;
 			
-		} else {
-			connectingClients = (BaseClient[]) NetworkUtil.expand(connectingClients, 1);
-			connectingClients[connectingClients.length-1] = client;
+		}
+		else {
+			this.connectingClients = (BaseClient[]) NetworkUtil.expand(
+			        this.connectingClients, 1);
+			this.connectingClients[this.connectingClients.length - 1] = client;
 		}
 	}
-
+	
 	protected void addDisconnectedClient(BaseClient client) {
-		removeClient(client);
+		this.removeClient(client);
 	}
 	
-	
 	protected void addReceivedPacketClient(BaseClient client) {
-		for (int i=0;i < receivedPacketClients.length;i++) {
-			if (receivedPacketClients[i] == client) {
+		for (int i = 0; i < this.receivedPacketClients.length; i++) {
+			if (this.receivedPacketClients[i] == client) {
 				// already exists
 				return;
 			}
 		}
 		
-		if (receivedPacketClients == nullClient) {
-			receivedPacketClients		= clientReceivedPackets1;
-			receivedPacketClients[0]	= client;
+		if (this.receivedPacketClients == this.nullClient) {
+			this.receivedPacketClients = this.clientReceivedPackets1;
+			this.receivedPacketClients[0] = client;
 			
-		} else if (receivedPacketClients == clientReceivedPackets1) {
-			receivedPacketClients		= clientReceivedPackets2;
-			receivedPacketClients[0]	= clientReceivedPackets1[0];
-			receivedPacketClients[1]	= client;
+		}
+		else if (this.receivedPacketClients == this.clientReceivedPackets1) {
+			this.receivedPacketClients = this.clientReceivedPackets2;
+			this.receivedPacketClients[0] = this.clientReceivedPackets1[0];
+			this.receivedPacketClients[1] = client;
 			
-		} else {
-			receivedPacketClients = (BaseClient[]) NetworkUtil.expand(receivedPacketClients, 1);
-			receivedPacketClients[receivedPacketClients.length-1] = client;
+		}
+		else {
+			this.receivedPacketClients = (BaseClient[]) NetworkUtil.expand(
+			        this.receivedPacketClients, 1);
+			this.receivedPacketClients[this.receivedPacketClients.length - 1] = client;
 		}
 	}
 	
 	public void clearReceivedPacket() {
-		for (int i=0;i < receivedPacketClients.length;i++) {
-			receivedPacketClients[i].clearReceivedPacket();
+		for (int i = 0; i < this.receivedPacketClients.length; i++) {
+			this.receivedPacketClients[i].clearReceivedPacket();
 		}
 		
-		receivedPacketClients = nullClient;
+		this.receivedPacketClients = this.nullClient;
 	}
 	
-
 	public abstract String getDetail();
-
 	
- /****************************************************************************/
- /****************************** BEANS METHODS *******************************/
- /****************************************************************************/
-
+	/** ************************************************************************* */
+	/** **************************** BEANS METHODS ****************************** */
+	/** ************************************************************************* */
+	
 	protected synchronized short getUniqueClientID() {
 		short id = 0;
 		boolean duplicate = false;
 		
 		do {
-			uniqueClientID++;
-			if (uniqueClientID >= Short.MAX_VALUE) {
-				uniqueClientID = (!duplicate) ? 0 : Short.MIN_VALUE; 
+			this.uniqueClientID++;
+			if (this.uniqueClientID >= Short.MAX_VALUE) {
+				this.uniqueClientID = (!duplicate) ? 0 : Short.MIN_VALUE;
 			}
-
-			id = uniqueClientID;
-
+			
+			id = this.uniqueClientID;
 			
 			// check for duplicate
 			duplicate = false;
 			
-			for (int i=0;i < clients.length;i++) {
-				if (clients[i].getClientID() == id) {
+			for (int i = 0; i < this.clients.length; i++) {
+				if (this.clients[i].getClientID() == id) {
 					duplicate = true;
 					break;
 				}
@@ -477,50 +530,48 @@ public abstract class BaseServer {
 		
 		return id;
 	}
-
-
+	
 	public BaseClient[] getConnectingClients() {
-		return connectingClients;
+		return this.connectingClients;
 	}
-
+	
 	public BaseClient[] getClients() {
-		return clients;
+		return this.clients;
 	}
-
+	
 	public BaseClient[] getClients(String groupName) {
-		BaseClient[] clients = (BaseClient[]) clientGroups.get(groupName);
+		BaseClient[] clients = (BaseClient[]) this.clientGroups.get(groupName);
 		
-		return (clients != null) ? clients : nullClient;
+		return (clients != null) ? clients : this.nullClient;
 	}
-
+	
 	public BaseClient[] getDisconnectedClients() {
-		return disconnectedClients;
+		return this.disconnectedClients;
 	}
 	
 	public String[] getClientGroups() {
-		return (String[]) clientGroups.keySet().toArray(nullString);
+		return (String[]) this.clientGroups.keySet().toArray(this.nullString);
 	}
 	
 	public String[] getClientGroups(String[] except) {
-		ArrayList list = new ArrayList(clientGroups.keySet());
-		for (int i=0;i < except.length;i++) {
+		ArrayList list = new ArrayList(this.clientGroups.keySet());
+		for (int i = 0; i < except.length; i++) {
 			list.remove(except[i]);
 		}
 		
 		return (String[]) list.toArray(new String[0]);
 	}
-
+	
 	public void clearClientGroups() {
-		clientGroups.clear();
+		this.clientGroups.clear();
 		
-		for (int i=0;i < clients.length;i++) {
-			clients[i].clearGroupName();
+		for (int i = 0; i < this.clients.length; i++) {
+			this.clients[i].clearGroupName();
 		}
 	}
 	
-	
 	public BaseClient[] getReceivedPacketClients() {
-		return receivedPacketClients;
+		return this.receivedPacketClients;
 	}
 	
 }

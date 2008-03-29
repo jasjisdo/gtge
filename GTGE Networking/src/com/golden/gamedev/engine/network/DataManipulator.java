@@ -23,7 +23,7 @@
 package com.golden.gamedev.engine.network;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public interface DataManipulator {

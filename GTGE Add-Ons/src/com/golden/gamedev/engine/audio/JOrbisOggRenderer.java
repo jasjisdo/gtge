@@ -19,486 +19,580 @@ package com.golden.gamedev.engine.audio;
 // JFC
 import java.io.InputStream;
 import java.net.URL;
-import javax.sound.sampled.*;
 
-// JORBIS
-import com.jcraft.jogg.*;
-import com.jcraft.jorbis.*;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
 
-// GTGE
+import com.jcraft.jogg.Packet;
+import com.jcraft.jogg.Page;
+import com.jcraft.jogg.StreamState;
+import com.jcraft.jogg.SyncState;
+import com.jcraft.jorbis.Block;
+import com.jcraft.jorbis.Comment;
+import com.jcraft.jorbis.DspState;
+import com.jcraft.jorbis.Info;
+
 import com.golden.gamedev.engine.BaseAudioRenderer;
-
 
 /**
  * Play Ogg sound (*.ogg) using JOrbis library, <br>
- * JOrbis library is available to download at
- * <a href="http://www.jcraft.com/jorbis/" target="_blank">
- * http://www.jcraft.com/jorbis/</a>. <p>
- *
- * Make sure the downloaded library is included into your game classpath
- * before using this audio renderer. <p>
- *
- * <b>Note: GTGE is not associated in any way with JOrbis,
- * this class is only interfacing JOrbis to be used in GTGE. <br>
- * This class is created and has been tested to be working properly
- * using <em>JOrbis 0.0.14</em>.</b> <p>
- *
+ * JOrbis library is available to download at <a
+ * href="http://www.jcraft.com/jorbis/" target="_blank">
+ * http://www.jcraft.com/jorbis/</a>.
+ * <p>
+ * 
+ * Make sure the downloaded library is included into your game classpath before
+ * using this audio renderer.
+ * <p>
+ * 
+ * <b>Note: GTGE is not associated in any way with JOrbis, this class is only
+ * interfacing JOrbis to be used in GTGE. <br>
+ * This class is created and has been tested to be working properly using
+ * <em>JOrbis 0.0.14</em>.</b>
+ * <p>
+ * 
  * How-to-use <code>JOrbisRenderer</code> in GTGE Frame Work :
+ * 
  * <pre>
- *    public class YourGame extends Game {
- *
- *       protected void initEngine() {
- *          super.initEngine();
- *
- *          // set sound effect to use ogg
- *          bsSound.setSampleRenderer(new JOrbisRenderer());
- *
- *          // set music to use ogg
- *          bsMusic.setSampleRenderer(new JOrbisRenderer());
- *       }
- *
- *    }
+ * public class YourGame extends Game {
+ * 	
+ * 	protected void initEngine() {
+ * 		super.initEngine();
+ * 		// set sound effect to use ogg
+ * 		bsSound.setSampleRenderer(new JOrbisRenderer());
+ * 		// set music to use ogg
+ * 		bsMusic.setSampleRenderer(new JOrbisRenderer());
+ * 	}
+ * }
  * </pre>
  */
 public class JOrbisOggRenderer extends BaseAudioRenderer {
-
-	private static final int BUFSIZE = 4096*2;
-
-	private static int convsize = BUFSIZE*2;
-	private static byte[] convbuffer = new byte[convsize];
-
-	private SyncState 	oy;
+	
+	private static final int BUFSIZE = 4096 * 2;
+	
+	private static int convsize = JOrbisOggRenderer.BUFSIZE * 2;
+	private static byte[] convbuffer = new byte[JOrbisOggRenderer.convsize];
+	
+	private SyncState oy;
 	private StreamState os;
-	private Page 		og;
-	private Packet 		op;
-	private Info 		vi;
-	private Comment 	vc;
-	private DspState 	vd;
-	private Block 		vb;
-
-	private byte[] 		buffer;
-	private int 		bytes;
-
-	private int 		format;
-	private int 		rate;
-	private int 		channels;
+	private Page og;
+	private Packet op;
+	private Info vi;
+	private Comment vc;
+	private DspState vd;
+	private Block vb;
+	
+	private byte[] buffer;
+	private int bytes;
+	
+	private int format;
+	private int rate;
+	private int channels;
 	private SourceDataLine outputLine;
-
-	private int 		frameSizeInBytes;
-	private int 		bufferLengthInBytes;
-
-	private OggPlayer	player;
+	
+	private int frameSizeInBytes;
+	private int bufferLengthInBytes;
+	
+	private OggPlayer player;
 	private InputStream bitStream;
-
-
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
+	
 	/**
 	 * Creates a new instance of <code>JOrbisOggRenderer</code>.
 	 */
 	public JOrbisOggRenderer() {
 	}
-
-    /**
-     * <i>Please refer to super class method documentation.</i>
-     */
-	public boolean isAvailable() { return true; }
-
-    /**
-     * <i>Please refer to super class method documentation.</i>
-     */
+	
+	/**
+	 * <i>Please refer to super class method documentation.</i>
+	 */
+	public boolean isAvailable() {
+		return true;
+	}
+	
+	/**
+	 * <i>Please refer to super class method documentation.</i>
+	 */
 	protected void playSound(URL audiofile) {
 		try {
-			bitStream = audiofile.openStream();
-		} catch (Exception e) {
+			this.bitStream = audiofile.openStream();
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
-
-		player = new OggPlayer();
-		player.setDaemon(true);
-		player.start();
+		
+		this.player = new OggPlayer();
+		this.player.setDaemon(true);
+		this.player.start();
 	}
-
-    /**
-     * <i>Please refer to super class method documentation.</i>
-     */
-    protected void replaySound(URL audiofile) {
-		playSound(audiofile);
-    }
-
-    /**
-     * <i>Please refer to super class method documentation.</i>
-     */
+	
+	/**
+	 * <i>Please refer to super class method documentation.</i>
+	 */
+	protected void replaySound(URL audiofile) {
+		this.playSound(audiofile);
+	}
+	
+	/**
+	 * <i>Please refer to super class method documentation.</i>
+	 */
 	protected void stopSound() {
-		if (player != null) {
+		if (this.player != null) {
 			try {
-				outputLine.drain();
-				outputLine.stop();
-				outputLine.close();
-				if (bitStream != null) {
-					bitStream.close();
+				this.outputLine.drain();
+				this.outputLine.stop();
+				this.outputLine.close();
+				if (this.bitStream != null) {
+					this.bitStream.close();
 				}
-			} catch (Exception e) { }
+			}
+			catch (Exception e) {
+			}
 		}
-
-		player = null;
+		
+		this.player = null;
 	}
-
-    /**
-     * <i>Please refer to super class method documentation.</i>
-     */
+	
+	/**
+	 * <i>Please refer to super class method documentation.</i>
+	 */
 	public boolean isVolumeSupported() {
 		return false;
 	}
-
-	private SourceDataLine getOutputLine(int channels, int rate){
-		if (outputLine	!= null ||
-			this.rate	!= rate ||
-			this.channels != channels) {
-			if (outputLine != null) {
-				outputLine.drain();
-				outputLine.stop();
-				outputLine.close();
+	
+	private SourceDataLine getOutputLine(int channels, int rate) {
+		if (this.outputLine != null || this.rate != rate
+		        || this.channels != channels) {
+			if (this.outputLine != null) {
+				this.outputLine.drain();
+				this.outputLine.stop();
+				this.outputLine.close();
 			}
-
-			init_audio(channels, rate);
-			outputLine.start();
+			
+			this.init_audio(channels, rate);
+			this.outputLine.start();
 		}
-    	return outputLine;
+		return this.outputLine;
 	}
-
+	
 	private void init_audio(int channels, int rate) {
 		try {
-			AudioFormat audioFormat = new AudioFormat((float) rate,
-		  											  16,
-													  channels,
-													  true,  // PCM_Signed
-													  false  // littleEndian
-													  );
+			AudioFormat audioFormat = new AudioFormat((float) rate, 16,
+			        channels, true, // PCM_Signed
+			        false // littleEndian
+			);
 			DataLine.Info info = new DataLine.Info(SourceDataLine.class,
-												   audioFormat,
-												   AudioSystem.NOT_SPECIFIED);
+			        audioFormat, AudioSystem.NOT_SPECIFIED);
 			if (!AudioSystem.isLineSupported(info)) {
 				System.out.println("Line " + info + " not supported.");
 				return;
 			}
-
+			
 			try {
-				outputLine = (SourceDataLine) AudioSystem.getLine(info);
+				this.outputLine = (SourceDataLine) AudioSystem.getLine(info);
 				// outputLine.addLineListener(this);
-				outputLine.open(audioFormat);
-			} catch (LineUnavailableException e) {
+				this.outputLine.open(audioFormat);
+			}
+			catch (LineUnavailableException e) {
 				System.out.println("Unable to open the sourceDataLine: " + e);
 				return;
-			} catch (IllegalArgumentException e) {
+			}
+			catch (IllegalArgumentException e) {
 				System.out.println("Illegal Argument: " + e);
 				return;
 			}
-
-			frameSizeInBytes = audioFormat.getFrameSize();
-			int bufferLengthInFrames = outputLine.getBufferSize() /
-									   frameSizeInBytes / 2;
-			bufferLengthInBytes = bufferLengthInFrames * frameSizeInBytes;
-
+			
+			this.frameSizeInBytes = audioFormat.getFrameSize();
+			int bufferLengthInFrames = this.outputLine.getBufferSize()
+			        / this.frameSizeInBytes / 2;
+			this.bufferLengthInBytes = bufferLengthInFrames
+			        * this.frameSizeInBytes;
+			
 			this.rate = rate;
 			this.channels = channels;
-		} catch(Exception e) {
+		}
+		catch (Exception e) {
 			System.out.println(e);
 		}
 	}
-
-	private void init_jorbis(){
-		oy=new SyncState();
-		os=new StreamState();
-		og=new Page();
-		op=new Packet();
-
-		vi=new Info();
-		vc=new Comment();
-		vd=new DspState();
-		vb=new Block(vd);
-
-		buffer=null;
-		bytes=0;
-
-		oy.init();
+	
+	private void init_jorbis() {
+		this.oy = new SyncState();
+		this.os = new StreamState();
+		this.og = new Page();
+		this.op = new Packet();
+		
+		this.vi = new Info();
+		this.vc = new Comment();
+		this.vd = new DspState();
+		this.vb = new Block(this.vd);
+		
+		this.buffer = null;
+		this.bytes = 0;
+		
+		this.oy.init();
 	}
-
+	
 	private class OggPlayer extends Thread {
+		
 		public final void run() {
-			init_jorbis();
-
-			loop:
-			while (true) {
+			JOrbisOggRenderer.this.init_jorbis();
+			
+			loop: while (true) {
 				int eos = 0;
-
-				int index = oy.buffer(BUFSIZE);
-				buffer = oy.data;
+				
+				int index = JOrbisOggRenderer.this.oy
+				        .buffer(JOrbisOggRenderer.BUFSIZE);
+				JOrbisOggRenderer.this.buffer = JOrbisOggRenderer.this.oy.data;
 				try {
-					bytes = bitStream.read(buffer, index, BUFSIZE);
-				} catch(Exception e) {
-					status = ERROR;
+					JOrbisOggRenderer.this.bytes = JOrbisOggRenderer.this.bitStream
+					        .read(JOrbisOggRenderer.this.buffer, index,
+					                JOrbisOggRenderer.BUFSIZE);
+				}
+				catch (Exception e) {
+					JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
 					System.err.println(e);
 					return;
 				}
-				oy.wrote(bytes);
-
-				if (oy.pageout(og) != 1) {
-					if (bytes < BUFSIZE) {
+				JOrbisOggRenderer.this.oy.wrote(JOrbisOggRenderer.this.bytes);
+				
+				if (JOrbisOggRenderer.this.oy
+				        .pageout(JOrbisOggRenderer.this.og) != 1) {
+					if (JOrbisOggRenderer.this.bytes < JOrbisOggRenderer.BUFSIZE) {
 						break;
 					}
-					status = ERROR;
-					System.err.println("Input does not appear to be an Ogg bitstream.");
+					JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
+					System.err
+					        .println("Input does not appear to be an Ogg bitstream.");
 					return;
 				}
-
-				os.init(og.serialno());
-				os.reset();
-
-				vi.init();
-				vc.init();
-
-				if (os.pagein(og) < 0) {
+				
+				JOrbisOggRenderer.this.os.init(JOrbisOggRenderer.this.og
+				        .serialno());
+				JOrbisOggRenderer.this.os.reset();
+				
+				JOrbisOggRenderer.this.vi.init();
+				JOrbisOggRenderer.this.vc.init();
+				
+				if (JOrbisOggRenderer.this.os.pagein(JOrbisOggRenderer.this.og) < 0) {
 					// error; stream version mismatch perhaps
-					status = ERROR;
-					System.err.println("Error reading first page of Ogg bitstream data.");
+					JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
+					System.err
+					        .println("Error reading first page of Ogg bitstream data.");
 					return;
 				}
-
-				if (os.packetout(op) != 1) {
+				
+				if (JOrbisOggRenderer.this.os
+				        .packetout(JOrbisOggRenderer.this.op) != 1) {
 					// no page? must not be vorbis
-					status = ERROR;
+					JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
 					System.err.println("Error reading initial header packet.");
 					break;
 					// return;
 				}
-
-				if (vi.synthesis_headerin(vc, op) < 0) {
+				
+				if (JOrbisOggRenderer.this.vi.synthesis_headerin(
+				        JOrbisOggRenderer.this.vc, JOrbisOggRenderer.this.op) < 0) {
 					// error case; not a vorbis header
-					status = ERROR;
-					System.err.println("This Ogg bitstream does not contain Vorbis audio data.");
+					JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
+					System.err
+					        .println("This Ogg bitstream does not contain Vorbis audio data.");
 					return;
 				}
-
+				
 				int i = 0;
-
+				
 				while (i < 2) {
-				while (i < 2) {
-					int result = oy.pageout(og);
-					if (result == 0) break; // Need more data
-					if (result == 1) {
-						os.pagein(og);
-						while (i < 2) {
-							result = os.packetout(op);
-							if (result == 0) break;
-							if (result == -1) {
-								status = ERROR;
-								System.err.println("Corrupt secondary header.  Exiting.");
-								//return;
-								break loop;
+					while (i < 2) {
+						int result = JOrbisOggRenderer.this.oy
+						        .pageout(JOrbisOggRenderer.this.og);
+						if (result == 0) {
+							break; // Need more data
+						}
+						if (result == 1) {
+							JOrbisOggRenderer.this.os
+							        .pagein(JOrbisOggRenderer.this.og);
+							while (i < 2) {
+								result = JOrbisOggRenderer.this.os
+								        .packetout(JOrbisOggRenderer.this.op);
+								if (result == 0) {
+									break;
+								}
+								if (result == -1) {
+									JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
+									System.err
+									        .println("Corrupt secondary header.  Exiting.");
+									// return;
+									break loop;
+								}
+								JOrbisOggRenderer.this.vi.synthesis_headerin(
+								        JOrbisOggRenderer.this.vc,
+								        JOrbisOggRenderer.this.op);
+								i++;
 							}
-							vi.synthesis_headerin(vc, op);
-							i++;
 						}
 					}
-				}
-
-				index = oy.buffer(BUFSIZE);
-				buffer = oy.data;
-				try {
-					bytes = bitStream.read(buffer, index, BUFSIZE);
-				} catch(Exception e) {
-					status = ERROR;
-					System.err.println(e);
-					return;
-				}
-
-				if (bytes == 0 && i < 2) {
-					status = ERROR;
-					System.err.println("End of file before finding all Vorbis headers!");
-					return;
-				}
-
-				oy.wrote(bytes);
-				}
-
-				convsize = BUFSIZE / vi.channels;
-
-				vd.synthesis_init(vi);
-				vb.init(vd);
-
-				double[][][] _pcm=new double[1][][];
-				float[][][] _pcmf=new float[1][][];
-				int[] _index=new int[vi.channels];
-
-				getOutputLine(vi.channels, vi.rate);
-
-				while (eos == 0) {
-				while (eos == 0) {
-
-					if (status != PLAYING) {
-						try {
-							//outputLine.drain();
-							//outputLine.stop();
-							//outputLine.close();
-							bitStream.close();
-						} catch (Exception e) {
-							System.err.println(e);
-						}
-
+					
+					index = JOrbisOggRenderer.this.oy
+					        .buffer(JOrbisOggRenderer.BUFSIZE);
+					JOrbisOggRenderer.this.buffer = JOrbisOggRenderer.this.oy.data;
+					try {
+						JOrbisOggRenderer.this.bytes = JOrbisOggRenderer.this.bitStream
+						        .read(JOrbisOggRenderer.this.buffer, index,
+						                JOrbisOggRenderer.BUFSIZE);
+					}
+					catch (Exception e) {
+						JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
+						System.err.println(e);
 						return;
 					}
-
-					int result = oy.pageout(og);
-					if (result == 0) break; // need more data
-					if (result == -1) { // missing or corrupt data at this page position
-						// System.err.println("Corrupt or missing data in bitstream; continuing...");
-					} else {
-						os.pagein(og);
-						while (true) {
-							result = os.packetout(op);
-							if (result == 0) break; // need more data
-							if (result == -1) { // missing or corrupt data at this page position
-								// no reason to complain; already complained above
-							} else {
-								// we have a packet.  Decode it
-								int samples;
-								if (vb.synthesis(op) == 0) { // test for success!
-									vd.synthesis_blockin(vb);
+					
+					if (JOrbisOggRenderer.this.bytes == 0 && i < 2) {
+						JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
+						System.err
+						        .println("End of file before finding all Vorbis headers!");
+						return;
+					}
+					
+					JOrbisOggRenderer.this.oy
+					        .wrote(JOrbisOggRenderer.this.bytes);
+				}
+				
+				JOrbisOggRenderer.convsize = JOrbisOggRenderer.BUFSIZE
+				        / JOrbisOggRenderer.this.vi.channels;
+				
+				JOrbisOggRenderer.this.vd
+				        .synthesis_init(JOrbisOggRenderer.this.vi);
+				JOrbisOggRenderer.this.vb.init(JOrbisOggRenderer.this.vd);
+				
+				double[][][] _pcm = new double[1][][];
+				float[][][] _pcmf = new float[1][][];
+				int[] _index = new int[JOrbisOggRenderer.this.vi.channels];
+				
+				JOrbisOggRenderer.this.getOutputLine(
+				        JOrbisOggRenderer.this.vi.channels,
+				        JOrbisOggRenderer.this.vi.rate);
+				
+				while (eos == 0) {
+					while (eos == 0) {
+						
+						if (JOrbisOggRenderer.this.status != BaseAudioRenderer.PLAYING) {
+							try {
+								// outputLine.drain();
+								// outputLine.stop();
+								// outputLine.close();
+								JOrbisOggRenderer.this.bitStream.close();
+							}
+							catch (Exception e) {
+								System.err.println(e);
+							}
+							
+							return;
+						}
+						
+						int result = JOrbisOggRenderer.this.oy
+						        .pageout(JOrbisOggRenderer.this.og);
+						if (result == 0) {
+							break; // need more data
+						}
+						if (result == -1) { // missing or corrupt data at this
+							// page position
+							// System.err.println("Corrupt or missing data in
+							// bitstream; continuing...");
+						}
+						else {
+							JOrbisOggRenderer.this.os
+							        .pagein(JOrbisOggRenderer.this.og);
+							while (true) {
+								result = JOrbisOggRenderer.this.os
+								        .packetout(JOrbisOggRenderer.this.op);
+								if (result == 0) {
+									break; // need more data
 								}
-								while((samples = vd.synthesis_pcmout(_pcmf, _index)) > 0) {
-									double[][] pcm=_pcm[0];
-									float[][] pcmf=_pcmf[0];
-									boolean clipflag=false;
-									int bout = (samples < convsize ? samples : convsize);
-
-									// convert doubles to 16 bit signed ints (host order) and
-									// interleave
-									for (i=0;i < vi.channels;i++) {
-										int ptr=i*2;
-										//int ptr=i;
-										int mono=_index[i];
-										for(int j=0;j < bout;j++) {
-											int val=(int)(pcmf[i][mono+j]*32767.);
-											if (val > 32767) {
-												val = 32767;
-												clipflag=true;
-											}
-											if (val < -32768) {
-												val = -32768;
-												clipflag = true;
-											}
-											if (val < 0) val = val|0x8000;
-											convbuffer[ptr] = (byte) (val);
-											convbuffer[ptr+1] = (byte) (val>>>8);
-											ptr += 2 * (vi.channels);
-										}
+								if (result == -1) { // missing or corrupt data
+									// at this page position
+									// no reason to complain; already complained
+									// above
+								}
+								else {
+									// we have a packet. Decode it
+									int samples;
+									if (JOrbisOggRenderer.this.vb
+									        .synthesis(JOrbisOggRenderer.this.op) == 0) { // test
+										// for
+										// success!
+										JOrbisOggRenderer.this.vd
+										        .synthesis_blockin(JOrbisOggRenderer.this.vb);
 									}
-									outputLine.write(convbuffer, 0, 2*vi.channels*bout);
-									vd.synthesis_read(bout);
+									while ((samples = JOrbisOggRenderer.this.vd
+									        .synthesis_pcmout(_pcmf, _index)) > 0) {
+										double[][] pcm = _pcm[0];
+										float[][] pcmf = _pcmf[0];
+										boolean clipflag = false;
+										int bout = (samples < JOrbisOggRenderer.convsize ? samples
+										        : JOrbisOggRenderer.convsize);
+										
+										// convert doubles to 16 bit signed ints
+										// (host order) and
+										// interleave
+										for (i = 0; i < JOrbisOggRenderer.this.vi.channels; i++) {
+											int ptr = i * 2;
+											// int ptr=i;
+											int mono = _index[i];
+											for (int j = 0; j < bout; j++) {
+												int val = (int) (pcmf[i][mono
+												        + j] * 32767.);
+												if (val > 32767) {
+													val = 32767;
+													clipflag = true;
+												}
+												if (val < -32768) {
+													val = -32768;
+													clipflag = true;
+												}
+												if (val < 0) {
+													val = val | 0x8000;
+												}
+												JOrbisOggRenderer.convbuffer[ptr] = (byte) (val);
+												JOrbisOggRenderer.convbuffer[ptr + 1] = (byte) (val >>> 8);
+												ptr += 2 * (JOrbisOggRenderer.this.vi.channels);
+											}
+										}
+										JOrbisOggRenderer.this.outputLine
+										        .write(
+										                JOrbisOggRenderer.convbuffer,
+										                0,
+										                2
+										                        * JOrbisOggRenderer.this.vi.channels
+										                        * bout);
+										JOrbisOggRenderer.this.vd
+										        .synthesis_read(bout);
+									}
 								}
 							}
+							if (JOrbisOggRenderer.this.og.eos() != 0) {
+								eos = 1;
+							}
 						}
-						if (og.eos() != 0) eos = 1;
 					}
-					}
-
+					
 					if (eos == 0) {
-						index = oy.buffer(BUFSIZE);
-						buffer = oy.data;
+						index = JOrbisOggRenderer.this.oy
+						        .buffer(JOrbisOggRenderer.BUFSIZE);
+						JOrbisOggRenderer.this.buffer = JOrbisOggRenderer.this.oy.data;
 						try {
-							bytes = bitStream.read(buffer, index, BUFSIZE);
-						} catch(Exception e) {
-							status = ERROR;
+							JOrbisOggRenderer.this.bytes = JOrbisOggRenderer.this.bitStream
+							        .read(JOrbisOggRenderer.this.buffer, index,
+							                JOrbisOggRenderer.BUFSIZE);
+						}
+						catch (Exception e) {
+							JOrbisOggRenderer.this.status = BaseAudioRenderer.ERROR;
 							System.err.println(e);
 							return;
 						}
-						if (bytes == -1) {
+						if (JOrbisOggRenderer.this.bytes == -1) {
 							break;
 						}
-						oy.wrote(bytes);
-						if (bytes == 0) eos = 1;
+						JOrbisOggRenderer.this.oy
+						        .wrote(JOrbisOggRenderer.this.bytes);
+						if (JOrbisOggRenderer.this.bytes == 0) {
+							eos = 1;
+						}
 					}
-	      		}
-
-				os.clear();
-				vb.clear();
-				vd.clear();
-				vi.clear();
-			}
-
-	    	oy.clear();
-
-			try {
-				if (bitStream != null) {
-					bitStream.close();
 				}
-			} catch(Exception e) { }
-
-			status = END_OF_SOUND;
+				
+				JOrbisOggRenderer.this.os.clear();
+				JOrbisOggRenderer.this.vb.clear();
+				JOrbisOggRenderer.this.vd.clear();
+				JOrbisOggRenderer.this.vi.clear();
+			}
+			
+			JOrbisOggRenderer.this.oy.clear();
+			
+			try {
+				if (JOrbisOggRenderer.this.bitStream != null) {
+					JOrbisOggRenderer.this.bitStream.close();
+				}
+			}
+			catch (Exception e) {
+			}
+			
+			JOrbisOggRenderer.this.status = BaseAudioRenderer.END_OF_SOUND;
 		}
 	}
-
-//	protected void finalize() throws Throwable {
-//		System.out.println("finalization = "+this);
-//		super.finalize();
-//	}
-
-
+	
+	// protected void finalize() throws Throwable {
+	// System.out.println("finalization = "+this);
+	// super.finalize();
+	// }
+	
 	/**
 	 * Testing the OGG Player.
 	 */
 	public static void main(String args[]) {
 		BaseAudioRenderer ogg = new JOrbisOggRenderer();
-
+		
 		String music1 = "file:///d:/golden t studios/trash/sound/MUSIC2.ogg";
-
+		
 		if (args != null) {
-			if (args.length >= 1) music1 = args[0];
+			if (args.length >= 1) {
+				music1 = args[0];
+			}
 		}
-
+		
 		// test first song
 		try {
 			ogg.play(new URL(music1));
-		} catch (Exception e) { e.printStackTrace(); }
-
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		// hear some music
 		int update = 0;
-		while (ogg.getStatus() == ogg.PLAYING) {
+		while (ogg.getStatus() == BaseAudioRenderer.PLAYING) {
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException e) { }
-
+			}
+			catch (InterruptedException e) {
+			}
+			
 			System.out.println(update++);
-
+			
 			if (update > 6) {
 				ogg.stop();
 			}
 		}
-
+		
 		// first song stopped
 		System.out.println("end-song");
-
-//		try {
-//			ogg.play(new URL("file:///d:/golden t studios/trash/songtitle.ogg"));
-//		} catch (Exception e) { e.printStackTrace(); }
-
+		
+		// try {
+		// ogg.play(new URL("file:///d:/golden t studios/trash/songtitle.ogg"));
+		// } catch (Exception e) { e.printStackTrace(); }
+		
 		// play it again
 		ogg.play();
-
+		
 		// wait until complete
-		while (ogg.getStatus() == ogg.PLAYING) {
+		while (ogg.getStatus() == BaseAudioRenderer.PLAYING) {
 			try {
 				Thread.sleep(1000);
-			} catch (InterruptedException e) { }
-
+			}
+			catch (InterruptedException e) {
+			}
+			
 			System.out.println(update++);
 		}
-
+		
 		System.out.println("end-song 2");
 	}
-
+	
 }

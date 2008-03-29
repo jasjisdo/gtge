@@ -24,6 +24,7 @@ package test.chat;
 
 // JFC
 import java.io.IOException;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -31,52 +32,56 @@ import com.golden.gamedev.engine.network.packet.NetworkMessage;
 import com.golden.gamedev.engine.network.tcp.TCPClient;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class MainClient {
 	
-	
 	public static void main(String[] args) {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception ex) { }
-
+		}
+		catch (Exception ex) {
+		}
 		
 		// server host name
-		String host = JOptionPane.showInputDialog("Server Host IP/Name :", "localhost");
-		if (host == null) System.exit(0);
+		String host = JOptionPane.showInputDialog("Server Host IP/Name :",
+		        "localhost");
+		if (host == null) {
+			System.exit(0);
+		}
 		
 		// server port
 		String port = JOptionPane.showInputDialog("Server Port :", "11137");
-		if (port == null) System.exit(0);
+		if (port == null) {
+			System.exit(0);
+		}
 		
 		int portNumber = 0;
-
+		
 		try {
 			portNumber = Integer.parseInt(port);
-		} catch (NumberFormatException ex) {
+		}
+		catch (NumberFormatException ex) {
 			ex.printStackTrace();
 			System.exit(-1);
 		}
-		
 		
 		// create client and connet to server
 		TCPClient client = null;
 		try {
 			client = new TCPClient(host, portNumber);
-
-		} catch (IOException ex) {
+			
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
 			
-			JOptionPane.showMessageDialog(null,
-				"Connection Failed.\n" +
-				"Caused by:\n" + ex.getMessage(),
-				"Connection Failed", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, "Connection Failed.\n"
+			        + "Caused by:\n" + ex.getMessage(), "Connection Failed",
+			        JOptionPane.ERROR_MESSAGE);
 			
 			System.exit(-1);
 		}
-
 		
 		// our first network packet: nick name
 		String nick = JOptionPane.showInputDialog("Enter Your Nick Name:");
@@ -85,21 +90,20 @@ public class MainClient {
 			client.silentDisconnect();
 			System.exit(0);
 		}
-
+		
 		// send the client nick name
 		try {
 			client.sendPacket(new NetworkMessage(nick));
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
-
-			JOptionPane.showMessageDialog(null,
-				"Connection Failed.\n" +
-				"Caused by:\n" + ex.getMessage(),
-				"Connection Failed", JOptionPane.ERROR_MESSAGE);
+			
+			JOptionPane.showMessageDialog(null, "Connection Failed.\n"
+			        + "Caused by:\n" + ex.getMessage(), "Connection Failed",
+			        JOptionPane.ERROR_MESSAGE);
 			
 			System.exit(-1);
 		}
-		
 		
 		// show the ui
 		new ClientGUI(client, nick).setVisible(true);

@@ -22,53 +22,53 @@
 
 package com.golden.gamedev.engine.network.packet;
 
-import com.golden.gamedev.engine.network.NetworkPacket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import com.golden.gamedev.engine.network.NetworkPacket;
+
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public final class NetworkPing extends NetworkPacket {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8978606059231699856L;
 	
-	public static short ID			= -25;	// the id for ping packet
+	public static short ID = -25; // the id for ping packet
 	
 	public static final byte[] ping = new byte[0];
 	
-
 	private static final NetworkPing instance = new NetworkPing();
 	
 	public static NetworkPing getInstance() {
-		return instance;
+		return NetworkPing.instance;
 	}
 	
-	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	// private constructor
 	private NetworkPing() {
 	}
-
 	
 	public short getID() {
-		return ID;
+		return NetworkPing.ID;
 	}
 	
 	public void setID(short id) {
 		throw new UnsupportedOperationException(
-			"To change NetworkPing ID, use NetworkPing.ID = new_id instead.");
+		        "To change NetworkPing ID, use NetworkPing.ID = new_id instead.");
 	}
-	
 	
 	public boolean isCompressed() {
 		return false;
 	}
-	
 	
 	public void read(DataInputStream input) throws IOException {
 	}

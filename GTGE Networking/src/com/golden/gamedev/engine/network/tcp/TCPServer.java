@@ -32,24 +32,22 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-// GTGE
 import com.golden.gamedev.engine.BaseServer;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class TCPServer extends BaseServer {
 	
 	private ServerSocketChannel server;
 	
-	private Selector			clientReader;
-	private Selector			packetReader;
+	private Selector clientReader;
+	private Selector packetReader;
 	
-	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	/** Creates a new instance of TCPServer */
 	public TCPServer(int port) throws IOException {
@@ -57,124 +55,125 @@ public class TCPServer extends BaseServer {
 	}
 	
 	public TCPServer(SocketAddress host) throws IOException {
-		server = ServerSocketChannel.open();
-		server.socket().bind(host);
-		server.configureBlocking(false);
+		this.server = ServerSocketChannel.open();
+		this.server.socket().bind(host);
+		this.server.configureBlocking(false);
 		
 		// register for event: accept new client connection
-		clientReader	= Selector.open();
-		server.register(clientReader, SelectionKey.OP_ACCEPT);
+		this.clientReader = Selector.open();
+		this.server.register(this.clientReader, SelectionKey.OP_ACCEPT);
 		
 		// prepare for event: packet from client
-		packetReader	= Selector.open();
+		this.packetReader = Selector.open();
 	}
-
 	
 	public void update(long elapsedTime) throws IOException {
 		super.update(elapsedTime);
 		
-		if (clientReader.selectNow() > 0) {
+		if (this.clientReader.selectNow() > 0) {
 			// client connected
-			Iterator clientIterator = clientReader.selectedKeys().iterator();
+			Iterator clientIterator = this.clientReader.selectedKeys()
+			        .iterator();
 			while (clientIterator.hasNext()) {
 				SelectionKey key = (SelectionKey) clientIterator.next();
 				clientIterator.remove();
 				
 				// construct client
-				SocketChannel client = server.accept();
-					
-				TCPClient tcpClient = new TCPClient(this, client, packetReader);
+				SocketChannel client = this.server.accept();
+				
+				TCPClient tcpClient = new TCPClient(this, client,
+				        this.packetReader);
 				
 				// add to connection client list
-				addConnectingClient(tcpClient);
+				this.addConnectingClient(tcpClient);
 			}
 		}
-
 		
-		if (packetReader.selectNow() > 0) {
+		if (this.packetReader.selectNow() > 0) {
 			// packet received
-			Iterator packetIterator = packetReader.selectedKeys().iterator();
+			Iterator packetIterator = this.packetReader.selectedKeys()
+			        .iterator();
 			
 			while (packetIterator.hasNext()) {
 				SelectionKey key = (SelectionKey) packetIterator.next();
 				packetIterator.remove();
-
+				
 				// construct packet
 				TCPClient client = (TCPClient) key.attachment();
-
+				
 				try {
 					client.read();
-
-				} catch (IOException ex) {
-//					ex.printStackTrace();
+					
+				}
+				catch (IOException ex) {
+					// ex.printStackTrace();
 					key.cancel();
-					removeClient(client);
+					this.removeClient(client);
 				}
 			}
-		}		
+		}
 	}
 	
-//	public void blockingUpdate(long elapsedTime) throws IOException {
-//		super.update(elapsedTime);
-//		
-//		// this select() blocks until there is activity on one of 
-//		// the registered channels
-//		selector.select();
-//		
-//		// get a java.util.Set containing the SelectionKey objects for
-//		// all channels that are ready for I/O
-//		Set keys = selector.selectedKeys();
-//		
-//		// use a java.util.Iterator to loop through the selected keys
-//		Iterator i=keys.iterator();
-//		while (i.hasNext()) {
-//			SelectionKey key = (SelectionKey) i.next();
-//			i.remove();  // remove the key from the set of selected keys
-//			
-//			// check whether this key is the SelectionKey we got when
-//			// we registered the ServerSocketChannel
-//			if (key == acceptKey) {
-//				// activity on the ServerSocketChannel means a client
-//				// is trying to connect to the server.
-//				if (key.isAcceptable()) {
-//					// accept the client connection
-//					SocketChannel client = server.accept();
-//
-//					// construct the client
-//					TCPClient tcpClient = new TCPClient(this, client, selector);
-//					
-//					// add to connection client list
-//					addConnectingClient(tcpClient);
-//				}
-//				
-//			} else {  
-//				// otherwise, there must be activity on a client channel
-//				// double-check that there is data to read
-//				if (!key.isReadable()) continue;
-//				
-//				// get the client channel that has data to read
-//				TCPClient client = (TCPClient) key.attachment();
-//				
-//				// construct packet
-//				try {
-//					client.read();
-//					
-//				} catch (IOException ex) {
-//					key.cancel();
-////					ex.printStackTrace();
-//					removeClient(client);
-//				}
-//			}
-//		}
-//	}
-
+	// public void blockingUpdate(long elapsedTime) throws IOException {
+	// super.update(elapsedTime);
+	//		
+	// // this select() blocks until there is activity on one of
+	// // the registered channels
+	// selector.select();
+	//		
+	// // get a java.util.Set containing the SelectionKey objects for
+	// // all channels that are ready for I/O
+	// Set keys = selector.selectedKeys();
+	//		
+	// // use a java.util.Iterator to loop through the selected keys
+	// Iterator i=keys.iterator();
+	// while (i.hasNext()) {
+	// SelectionKey key = (SelectionKey) i.next();
+	// i.remove(); // remove the key from the set of selected keys
+	//			
+	// // check whether this key is the SelectionKey we got when
+	// // we registered the ServerSocketChannel
+	// if (key == acceptKey) {
+	// // activity on the ServerSocketChannel means a client
+	// // is trying to connect to the server.
+	// if (key.isAcceptable()) {
+	// // accept the client connection
+	// SocketChannel client = server.accept();
+	//
+	// // construct the client
+	// TCPClient tcpClient = new TCPClient(this, client, selector);
+	//					
+	// // add to connection client list
+	// addConnectingClient(tcpClient);
+	// }
+	//				
+	// } else {
+	// // otherwise, there must be activity on a client channel
+	// // double-check that there is data to read
+	// if (!key.isReadable()) continue;
+	//				
+	// // get the client channel that has data to read
+	// TCPClient client = (TCPClient) key.attachment();
+	//				
+	// // construct packet
+	// try {
+	// client.read();
+	//					
+	// } catch (IOException ex) {
+	// key.cancel();
+	// // ex.printStackTrace();
+	// removeClient(client);
+	// }
+	// }
+	// }
+	// }
+	
 	protected void disconnectImpl() throws IOException {
-		server.close();
+		this.server.close();
 	}
-
 	
 	public String getDetail() {
-		return server.socket().getLocalSocketAddress().toString();
+		return this.server.socket().getLocalSocketAddress().toString();
 	}
 	
 }

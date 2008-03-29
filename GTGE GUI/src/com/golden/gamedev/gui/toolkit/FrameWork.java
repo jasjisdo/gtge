@@ -16,363 +16,421 @@
  */
 package com.golden.gamedev.gui.toolkit;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
 
-import com.golden.gamedev.engine.*;
-
+import com.golden.gamedev.engine.BaseInput;
 import com.golden.gamedev.gui.TPane;
 import com.golden.gamedev.gui.theme.basic.BasicTheme;
 
 public class FrameWork {
-	///////// NULL SINGLETON /////////
+	
+	// /////// NULL SINGLETON /////////
 	public static final FrameWork NULL_FRAME = new FrameWork();
-
-//	protected TInputEvent 	inputEvent = new TInputEvent();
+	
+	// protected TInputEvent inputEvent = new TInputEvent();
 	protected final BaseInput bsInput;
-
-	private TContainer 		contentPane;
-	private TToolTip		tooltip;
-	private TComponent		modal;
-
-	private TComponent 		hoverComponent;
-	private TComponent 		selectedComponent;
-	private TComponent[] 	clickComponent = new TComponent[3];
-
-	private UITheme 		theme;
-
+	
+	private TContainer contentPane;
+	private TToolTip tooltip;
+	private TComponent modal;
+	
+	private TComponent hoverComponent;
+	private TComponent selectedComponent;
+	private TComponent[] clickComponent = new TComponent[3];
+	
+	private UITheme theme;
+	
 	public FrameWork(BaseInput input, int width, int height) {
 		this.contentPane = new TPane(0, 0, width, height);
 		this.bsInput = input;
 		this.theme = new BasicTheme();
-
-		tooltip = new TToolTip();
-		contentPane.add(tooltip);
-
-		setFrameWork(contentPane);
+		
+		this.tooltip = new TToolTip();
+		this.contentPane.add(this.tooltip);
+		
+		this.setFrameWork(this.contentPane);
 	}
-	///////// null frame work /////////
+	
+	// /////// null frame work /////////
 	private FrameWork() {
 		this.contentPane = new TPane(0, 0, 1, 1);
 		this.bsInput = null;
 		this.theme = new UITheme();
-
-		setFrameWork(contentPane);
+		
+		this.setFrameWork(this.contentPane);
 	}
-
+	
 	public void add(TComponent comp) {
-		contentPane.add(comp);
-		processMouseMotionEvent();
+		this.contentPane.add(comp);
+		this.processMouseMotionEvent();
 	}
+	
 	public int remove(TComponent comp) {
-		int removed = removeComponent(contentPane, comp);
-		if (removed != -1) processMouseMotionEvent();
-
+		int removed = this.removeComponent(this.contentPane, comp);
+		if (removed != -1) {
+			this.processMouseMotionEvent();
+		}
+		
 		return removed;
 	}
+	
 	private int removeComponent(TContainer container, TComponent comp) {
 		int removed = container.remove(comp);
 		TComponent[] components = container.getComponents();
 		int i = 0;
-		while (removed == -1 && i < components.length-1) {
+		while (removed == -1 && i < components.length - 1) {
 			if (components[i].isContainer()) {
-				removed = removeComponent((TContainer) components[i], comp);
+				removed = this
+				        .removeComponent((TContainer) components[i], comp);
 			}
 			i++;
 		}
-
+		
 		return removed;
 	}
-
+	
 	public void update() {
-		if (!contentPane.isVisible()) return;
-
-		processEvents();
-
+		if (!this.contentPane.isVisible()) {
+			return;
+		}
+		
+		this.processEvents();
+		
 		// update all components!
-		contentPane.update();
+		this.contentPane.update();
 	}
+	
 	public void render(Graphics2D g) {
-		contentPane.render(g);
+		this.contentPane.render(g);
 	}
-
-	///////// events /////////
+	
+	// /////// events /////////
 	private void processEvents() {
-		///////// mouse motion event /////////
-		processMouseMotionEvent();
-
-		///////// mouse event /////////
-		if (hoverComponent != null && hoverComponent.isEnabled()) {
-			processMouseEvent();
+		// /////// mouse motion event /////////
+		this.processMouseMotionEvent();
+		
+		// /////// mouse event /////////
+		if (this.hoverComponent != null && this.hoverComponent.isEnabled()) {
+			this.processMouseEvent();
 		}
-
-		///////// key event /////////
-		if (selectedComponent != null && selectedComponent.isEnabled()) {
-			processKeyEvent();
+		
+		// /////// key event /////////
+		if (this.selectedComponent != null
+		        && this.selectedComponent.isEnabled()) {
+			this.processKeyEvent();
 		}
 	}
-	///////// mouse motion event /////////
+	
+	// /////// mouse motion event /////////
 	private void processMouseMotionEvent() {
-		if ((hoverComponent != null && hoverComponent.isEnabled()) &&
-			(bsInput.isMouseDown(MouseEvent.BUTTON1) ||
-			 bsInput.isMouseDown(MouseEvent.BUTTON2) ||
-		 	 bsInput.isMouseDown(MouseEvent.BUTTON3))) {
-
-			if (bsInput.getMouseDX() != 0 || bsInput.getMouseDY() != 0) {
-				hoverComponent.processMouseDragged();
+		if ((this.hoverComponent != null && this.hoverComponent.isEnabled())
+		        && (this.bsInput.isMouseDown(MouseEvent.BUTTON1)
+		                || this.bsInput.isMouseDown(MouseEvent.BUTTON2) || this.bsInput
+		                .isMouseDown(MouseEvent.BUTTON3))) {
+			
+			if (this.bsInput.getMouseDX() != 0
+			        || this.bsInput.getMouseDY() != 0) {
+				this.hoverComponent.processMouseDragged();
 			}
-
-		} else {
+			
+		}
+		else {
 			// find component at current mouse coordinates
-			TComponent comp = findComponent(bsInput.getMouseX(),
-											bsInput.getMouseY());
-
+			TComponent comp = this.findComponent(this.bsInput.getMouseX(),
+			        this.bsInput.getMouseY());
+			
 			if (comp != null) {
-			    if (bsInput.getMouseDX() != 0 || bsInput.getMouseDY() != 0) {
+				if (this.bsInput.getMouseDX() != 0
+				        || this.bsInput.getMouseDY() != 0) {
 					comp.processMouseMoved();
-					tooltip.dismiss = 0; // refresh tooltip, so the tooltip will
-										 // always visible if the mouse keep moving
+					this.tooltip.dismiss = 0; // refresh tooltip, so the
+												// tooltip will
+					// always visible if the mouse keep moving
 				}
-
-				if (hoverComponent == null) {
-					tooltip.setToolTipComponent(comp);
+				
+				if (this.hoverComponent == null) {
+					this.tooltip.setToolTipComponent(comp);
 					comp.processMouseEntered();
-
-				} else if (comp != hoverComponent) {
-					tooltip.setToolTipComponent(comp);
-					hoverComponent.processMouseExited();
+					
+				}
+				else if (comp != this.hoverComponent) {
+					this.tooltip.setToolTipComponent(comp);
+					this.hoverComponent.processMouseExited();
 					comp.processMouseEntered();
 				}
-
-			} else { // no hover component right now
-				tooltip.setToolTipComponent(null);
-				if (hoverComponent != null) {
-					hoverComponent.processMouseExited();
+				
+			}
+			else { // no hover component right now
+				this.tooltip.setToolTipComponent(null);
+				if (this.hoverComponent != null) {
+					this.hoverComponent.processMouseExited();
 				}
 			}
-
+			
 			// set component as the new hover component
-			hoverComponent = comp;
+			this.hoverComponent = comp;
 		}
 	}
-	///////// mouse event /////////
+	
+	// /////// mouse event /////////
 	private void processMouseEvent() {
-		int pressed = bsInput.getMousePressed(),
-			released = bsInput.getMouseReleased();
-
+		int pressed = this.bsInput.getMousePressed(), released = this.bsInput
+		        .getMouseReleased();
+		
 		if (pressed != BaseInput.NO_BUTTON) {
-			tooltip.setToolTipComponent(null);
-			tooltip.reshow = 0;
-			tooltip.initial = 0;
-			hoverComponent.processMousePressed();
-
-			clickComponent[pressed - 1] = hoverComponent;
-
+			this.tooltip.setToolTipComponent(null);
+			this.tooltip.reshow = 0;
+			this.tooltip.initial = 0;
+			this.hoverComponent.processMousePressed();
+			
+			this.clickComponent[pressed - 1] = this.hoverComponent;
+			
 			// if mouse button 1 pressed,
 			// sets hover component as selected component
-			if (hoverComponent.isFocusable())
-				if (pressed == MouseEvent.BUTTON1 &&
-					hoverComponent != selectedComponent)
-					selectComponent(hoverComponent);
+			if (this.hoverComponent.isFocusable()) {
+				if (pressed == MouseEvent.BUTTON1
+				        && this.hoverComponent != this.selectedComponent) {
+					this.selectComponent(this.hoverComponent);
+				}
+			}
 		}
-
+		
 		if (released != BaseInput.NO_BUTTON) {
-			hoverComponent.processMouseReleased();
-
+			this.hoverComponent.processMouseReleased();
+			
 			// mouse pressed == mouse released
 			// process mouse click
-			if (clickComponent[released - 1] == hoverComponent) {
-				hoverComponent.processMouseClicked();
+			if (this.clickComponent[released - 1] == this.hoverComponent) {
+				this.hoverComponent.processMouseClicked();
 			}
 		}
 	}
-	///////// key event /////////
+	
+	// /////// key event /////////
 	private void processKeyEvent() {
-		if (bsInput.getKeyPressed() != BaseInput.NO_KEY)
-			selectedComponent.keyPressed();
-
-		if (bsInput.getKeyReleased() != BaseInput.NO_KEY &&
-			selectedComponent != null)
-			selectedComponent.processKeyReleased();
+		if (this.bsInput.getKeyPressed() != BaseInput.NO_KEY) {
+			this.selectedComponent.keyPressed();
+		}
+		
+		if (this.bsInput.getKeyReleased() != BaseInput.NO_KEY
+		        && this.selectedComponent != null) {
+			this.selectedComponent.processKeyReleased();
+		}
 	}
-
-
-	///////// member methods /////////
+	
+	// /////// member methods /////////
 	private TComponent findComponent(int x, int y) {
-		if (modal != null && !modal.isContainer()) {
+		if (this.modal != null && !this.modal.isContainer()) {
 			// when there's a modal, and the modal not container
 			// return immediately
 			return null;
 		}
-
+		
 		// set the top container that hold all child components
 		// contentpane or modal
-		TContainer panel = (modal == null) ?
-					       contentPane : ((TContainer) modal);
-		TComponent comp = panel.findComponent(x,y);
-
+		TContainer panel = (this.modal == null) ? this.contentPane
+		        : ((TContainer) this.modal);
+		TComponent comp = panel.findComponent(x, y);
+		
 		return comp;
-//		return (comp == panel) ? null : comp;
-
-//		return contentPane.findComponent(x, y);
+		// return (comp == panel) ? null : comp;
+		
+		// return contentPane.findComponent(x, y);
 	}
-
+	
 	public void clearFocus() {
-		deselectComponent();
+		this.deselectComponent();
 	}
+	
 	void deselectComponent() {
-		if (selectedComponent == null) {
+		if (this.selectedComponent == null) {
 			return; // there's no selected component, nothing to proceed
 		}
-
-		selectedComponent.setSelected(false);
-		selectedComponent = null;
+		
+		this.selectedComponent.setSelected(false);
+		this.selectedComponent = null;
 	}
+	
 	boolean selectComponent(TComponent comp) {
-		if (!comp.isVisible() ||      	// can not select invisible,
-			!comp.isFocusable() ||		// unfocusable, and disable component
-			!comp.isEnabled()) return false;
-
+		if (!comp.isVisible() || // can not select invisible,
+		        !comp.isFocusable() || // unfocusable, and disable component
+		        !comp.isEnabled()) {
+			return false;
+		}
+		
 		// clear last selected component
-		deselectComponent();
-
+		this.deselectComponent();
+		
 		// select component
 		comp.setSelected(true);
-		selectedComponent = comp;
-
+		this.selectedComponent = comp;
+		
 		return true;
 	}
-
+	
 	void setFrameWork(TComponent comp) {
 		if (comp.isContainer()) {
 			TComponent[] child = ((TContainer) comp).getComponents();
-		    for (int i=0;i < child.length;i++) {
-				setFrameWork(child[i]);
+			for (int i = 0; i < child.length; i++) {
+				this.setFrameWork(child[i]);
 			}
 		}
-
+		
 		comp.setFrameWork(this);
 	}
-
+	
 	void setComponentStat(TComponent comp, boolean active) {
-		if (this == NULL_FRAME) return;
-
+		if (this == FrameWork.NULL_FRAME) {
+			return;
+		}
+		
 		if (active == false) { // component is set to non-active
-			if (hoverComponent == comp) { // check for new hover component
-				processMouseMotionEvent();
+			if (this.hoverComponent == comp) { // check for new hover component
+				this.processMouseMotionEvent();
 			}
-
-			if (selectedComponent == comp) {
-				deselectComponent();
+			
+			if (this.selectedComponent == comp) {
+				this.deselectComponent();
 			}
-
-			for (int i=0;i < clickComponent.length;i++) {
+			
+			for (int i = 0; i < this.clickComponent.length; i++) {
 				// check for clicked component
-				if (clickComponent[i] == comp) {
-					clickComponent[i] = null;
+				if (this.clickComponent[i] == comp) {
+					this.clickComponent[i] = null;
 					break;
 				}
 			}
-
+			
 			// set to non-modal
-			if (modal == comp) {
-				modal = null;
+			if (this.modal == comp) {
+				this.modal = null;
 			}
-
-		} else {
-			// check is this component is new hover component
-			processMouseMotionEvent();
+			
 		}
-
+		else {
+			// check is this component is new hover component
+			this.processMouseMotionEvent();
+		}
+		
 		if (comp.isContainer()) {
 			TComponent[] components = ((TContainer) comp).getComponents();
 			int size = ((TContainer) comp).getComponentCount();
-			for (int i=0;i < size;i++) {
-				setComponentStat(components[i], active);
+			for (int i = 0; i < size; i++) {
+				this.setComponentStat(components[i], active);
 			}
 		}
 	}
+	
 	void clearComponentsStat(TComponent[] comp) {
-		if (this == NULL_FRAME) return;
-
+		if (this == FrameWork.NULL_FRAME) {
+			return;
+		}
+		
 		boolean checkMouseMotion = false;
-		for (int i=0;i < comp.length;i++) {
-			if (hoverComponent == comp[i]) {
+		for (int i = 0; i < comp.length; i++) {
+			if (this.hoverComponent == comp[i]) {
 				checkMouseMotion = true;
 			}
-
-			if (selectedComponent == comp[i]) {
-				deselectComponent();
+			
+			if (this.selectedComponent == comp[i]) {
+				this.deselectComponent();
 			}
-
-			for (int j=0;j < clickComponent.length;j++) {
+			
+			for (int j = 0; j < this.clickComponent.length; j++) {
 				// check for clicked component
-				if (clickComponent[j] == comp[i]) {
-					clickComponent[j] = null;
+				if (this.clickComponent[j] == comp[i]) {
+					this.clickComponent[j] = null;
 					break;
 				}
 			}
 		}
-
-		if (checkMouseMotion) processMouseMotionEvent();
+		
+		if (checkMouseMotion) {
+			this.processMouseMotionEvent();
+		}
 	}
-
+	
 	public void validateUI() {
-		validateContainer(contentPane);
+		this.validateContainer(this.contentPane);
 	}
+	
 	final void validateContainer(TContainer container) {
 		if (container.UIResource().size() > 0) {
 			container.createUI();
 		}
-
+		
 		TComponent[] components = container.getComponents();
 		int size = container.getComponentCount();
-		for (int i=0;i < size;i++) {
+		for (int i = 0; i < size; i++) {
 			if (components[i].UIResource().size() > 0) {
 				components[i].createUI();
 			}
 			if (components[i].isContainer()) {
-				validateContainer((TContainer) components[i]);
+				this.validateContainer((TContainer) components[i]);
 			}
 		}
 	}
-
-	///////// member variables /////////
-	public int getWidth() { return contentPane.getWidth(); }
-	public int getHeight() { return contentPane.getHeight(); }
-	public void setSize(int w, int h) { contentPane.setSize(w, h); }
-
-	public TContainer getContentPane() { return contentPane; }
-	public void setContentPane(TContainer pane) {
-		pane.setBounds(0, 0, getWidth(), getHeight());
-
-		contentPane = pane;
-		setFrameWork(contentPane);
+	
+	// /////// member variables /////////
+	public int getWidth() {
+		return this.contentPane.getWidth();
 	}
-
-	public TComponent getHoverComponent() { return hoverComponent; }
-	public TComponent getSelectedComponent() { return selectedComponent; }
-
-	public TComponent getModal() { return modal; }
+	
+	public int getHeight() {
+		return this.contentPane.getHeight();
+	}
+	
+	public void setSize(int w, int h) {
+		this.contentPane.setSize(w, h);
+	}
+	
+	public TContainer getContentPane() {
+		return this.contentPane;
+	}
+	
+	public void setContentPane(TContainer pane) {
+		pane.setBounds(0, 0, this.getWidth(), this.getHeight());
+		
+		this.contentPane = pane;
+		this.setFrameWork(this.contentPane);
+	}
+	
+	public TComponent getHoverComponent() {
+		return this.hoverComponent;
+	}
+	
+	public TComponent getSelectedComponent() {
+		return this.selectedComponent;
+	}
+	
+	public TComponent getModal() {
+		return this.modal;
+	}
+	
 	public void setModal(TComponent comp) {
 		if (comp != null && !comp.isVisible()) {
-			throw new RuntimeException("Can't set invisible component as modal component!");
+			throw new RuntimeException(
+			        "Can't set invisible component as modal component!");
 		}
-
-		modal = comp;
+		
+		this.modal = comp;
 	}
-
+	
 	/**
 	 * Returns the latest inserted component into this frame work.
 	 */
 	public TComponent get() {
-		return contentPane.get();
+		return this.contentPane.get();
 	}
-
-	public UITheme getTheme() { return theme; }
+	
+	public UITheme getTheme() {
+		return this.theme;
+	}
+	
 	public void installTheme(UITheme newTheme) {
-		UIRenderer[] ui = theme.getInstalledUI();
-		for (int i=0;i < ui.length;i++) {
+		UIRenderer[] ui = this.theme.getInstalledUI();
+		for (int i = 0; i < ui.length; i++) {
 			if (newTheme.getUITheme(ui[i].UIName()) == null || ui[i].immutable) {
 				// new theme doesn't have UI Renderer for specified UIName
 				// or old theme use immutable renderers for specified UIName
@@ -380,37 +438,42 @@ public class FrameWork {
 				newTheme.installUI(ui[i]);
 			}
 		}
-
-		theme = newTheme;
-
-		installTheme(contentPane);
+		
+		this.theme = newTheme;
+		
+		this.installTheme(this.contentPane);
 	}
+	
 	private void installTheme(TComponent comp) {
-		comp.setUIRenderer(theme.getUIRenderer(comp.UIName()));
+		comp.setUIRenderer(this.theme.getUIRenderer(comp.UIName()));
 		if (comp.isContainer()) {
 			TComponent[] childs = ((TContainer) comp).getComponents();
-			for (int i=0;i < childs.length;i++) {
-				installTheme(childs[i]);
+			for (int i = 0; i < childs.length; i++) {
+				this.installTheme(childs[i]);
 			}
 		}
 	}
-
-	public TToolTip getToolTip() { return tooltip; }
-	public void setToolTip(TToolTip tip) {
-		contentPane.replace(tooltip, tip);
-		tooltip = tip;
+	
+	public TToolTip getToolTip() {
+		return this.tooltip;
 	}
-
+	
+	public void setToolTip(TToolTip tip) {
+		this.contentPane.replace(this.tooltip, tip);
+		this.tooltip = tip;
+	}
+	
 	protected void finalize() throws Throwable {
-		System.out.println("Finalization Frame Work = "+this);
+		System.out.println("Finalization Frame Work = " + this);
 		super.finalize();
 	}
-
+	
 	public String toString() {
-		if (this == NULL_FRAME) return "NULL FRAME WORK";
-		return super.toString() + " " +
-			"[width=" + getWidth() +
-			", height=" + getHeight() + "]";
+		if (this == FrameWork.NULL_FRAME) {
+			return "NULL FRAME WORK";
+		}
+		return super.toString() + " " + "[width=" + this.getWidth()
+		        + ", height=" + this.getHeight() + "]";
 	}
-
+	
 }

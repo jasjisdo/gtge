@@ -25,7 +25,6 @@ package test;
 // JFC
 import java.io.IOException;
 
-// GTGE NETWORKING
 import com.golden.gamedev.engine.BaseClient;
 import com.golden.gamedev.engine.BaseServer;
 import com.golden.gamedev.engine.network.NetworkPacket;
@@ -33,105 +32,113 @@ import com.golden.gamedev.engine.network.packet.NetworkMessage;
 import com.golden.gamedev.engine.network.tcp.TCPServer;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class TestServer {
 	
-	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	private static void handleNetwork(BaseServer server) {
 		// handle connecting clients
-		BaseClient[] clients = server.getConnectingClients();	// all connecting clients
+		BaseClient[] clients = server.getConnectingClients(); // all
+																// connecting
+																// clients
 		if (clients.length > 0) {
-			for (int i=0;i < clients.length;i++) {
-				System.out.println("New Client Connected: " + clients[i].getRemoteDetail());
+			for (int i = 0; i < clients.length; i++) {
+				System.out.println("New Client Connected: "
+				        + clients[i].getRemoteDetail());
 				
 				try {
 					clients[i].sendPacket(new NetworkMessage("Hello World"));
 					
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					ex.printStackTrace();
 				}
 			}
 		}
 		
-		
 		// handle disconnected clients
-		clients = server.getDisconnectedClients();	// all disconnected clients
+		clients = server.getDisconnectedClients(); // all disconnected clients
 		if (clients.length > 0) {
 			System.out.println("DISCONNECTED CLIENT = " + clients.length);
 		}
 		
-		for (int i=0;i < clients.length;i++) {
-			System.out.println("Client Disconnected: " + clients[i].getRemoteDetail());
+		for (int i = 0; i < clients.length; i++) {
+			System.out.println("Client Disconnected: "
+			        + clients[i].getRemoteDetail());
 		}
 		
-		
 		// handle new packets
-		clients = server.getReceivedPacketClients();	// all clients which received packets
-		for (int i=0;i < clients.length;i++) {
-			NetworkPacket[] packets = clients[i].getReceivedPackets();	// get the packets
+		clients = server.getReceivedPacketClients(); // all clients which
+														// received packets
+		for (int i = 0; i < clients.length; i++) {
+			NetworkPacket[] packets = clients[i].getReceivedPackets(); // get
+																		// the
+																		// packets
 			
-			for (int j=0;j < packets.length;j++) {
+			for (int j = 0; j < packets.length; j++) {
 				NetworkMessage packet = (NetworkMessage) packets[j];
 				
-				System.out.println(clients[i].getRemoteDetail() + ": " + packet.getMessage());
-
+				System.out.println(clients[i].getRemoteDetail() + ": "
+				        + packet.getMessage());
+				
 				try {
 					clients[i].sendPacket(new NetworkMessage("Server said OK"));
 					
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					ex.printStackTrace();
 				}
 			}
 		}
 	}
 	
-	
 	public static void main(String[] args) {
 		// construct server
 		TCPServer server = null;
 		
 		try {
-			server = new TCPServer(11137);	// connect to port 11137
+			server = new TCPServer(11137); // connect to port 11137
 			
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
-			System.err.println("Server initialization failed.\nCaused by:\n" + ex.getMessage());
+			System.err.println("Server initialization failed.\nCaused by:\n"
+			        + ex.getMessage());
 			System.exit(-1);
 		}
 		
 		System.out.println("Server Detail: " + server.getDetail());
 		
-
 		// network loop
 		while (true) {
 			try {
 				server.update(100);
 				
-			} catch (IOException ex) {				
+			}
+			catch (IOException ex) {
 				ex.printStackTrace();
 			}
 			
-			handleNetwork(server);
+			TestServer.handleNetwork(server);
 			
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException ex) {
+			}
+			catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
 		
-		
-//		try {
-//			server.close();
-//		} catch (IOException ex) {
-//			ex.printStackTrace();
-//		}
+		// try {
+		// server.close();
+		// } catch (IOException ex) {
+		// ex.printStackTrace();
+		// }
 	}
 	
 }

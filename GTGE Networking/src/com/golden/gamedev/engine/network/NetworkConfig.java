@@ -26,110 +26,106 @@ import com.golden.gamedev.engine.network.packet.NetworkObject;
 
 /**
  * Static class to configure commonly used network configuration.
- *
+ * 
  * @author Paulus Tuerah
  */
 public final class NetworkConfig {
-
-	public static boolean			DEBUG				= false;
-
-
-	private static PacketManager	packetManager		= new PacketManager();
-
-	private static boolean			autoConsumed		= true;
-
-	private static boolean			defaultCompressed	= true;		// packet default compressed
-	private static int				defaultPingTime		= 6000;		// default ping server-client 6 secs
-	private static boolean			defaultSendCode		= false;	// default not send code (used on multi-threading)
-	private static boolean			defaultSendSender	= false;	//
-	private static int				defaultExpiredTime	= 10000;
-
-
+	
+	public static boolean DEBUG = false;
+	
+	private static PacketManager packetManager = new PacketManager();
+	
+	private static boolean autoConsumed = true;
+	
+	private static boolean defaultCompressed = true; // packet default
+														// compressed
+	private static int defaultPingTime = 6000; // default ping server-client 6
+												// secs
+	private static boolean defaultSendCode = false; // default not send code
+													// (used on multi-threading)
+	private static boolean defaultSendSender = false; //
+	private static int defaultExpiredTime = 10000;
+	
 	// private constructor
-	private NetworkConfig() { }
-
-
+	private NetworkConfig() {
+	}
+	
 	public static PacketManager getPacketManager() {
-		return packetManager;
+		return NetworkConfig.packetManager;
 	}
-
+	
 	public static void setPacketManager(PacketManager manager) {
-		packetManager = manager;
+		NetworkConfig.packetManager = manager;
 	}
-
-
+	
 	public static void registerPacket(short id, Class packetClass) {
-		packetManager.registerPacket(id, packetClass);
+		NetworkConfig.packetManager.registerPacket(id, packetClass);
 	}
-
+	
 	public static void registerPacket(short id, NetworkPacket packet) {
-		packetManager.registerPacket(id, packet);
+		NetworkConfig.packetManager.registerPacket(id, packet);
 	}
-
+	
 	public static void registerPacket(short id, Class type, String description) {
-		packetManager.registerPacket(id, new NetworkObject(id, type).setDescription(description));
+		NetworkConfig.packetManager.registerPacket(id, new NetworkObject(id,
+		        type).setDescription(description));
 	}
-
+	
 	public static void registerPacket(short id, String description) {
-		packetManager.registerPacket(id, new NetworkObject(id).setDescription(description));
+		NetworkConfig.packetManager.registerPacket(id, new NetworkObject(id)
+		        .setDescription(description));
 	}
-
-
- /****************************************************************************/
- /****************************** BEANS METHODS *******************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** **************************** BEANS METHODS ****************************** */
+	/** ************************************************************************* */
+	
 	public static boolean isDefaultCompressed() {
-		return defaultCompressed;
+		return NetworkConfig.defaultCompressed;
 	}
-
+	
 	public static void setDefaultCompressed(boolean compressed) {
-		defaultCompressed = compressed;
+		NetworkConfig.defaultCompressed = compressed;
 	}
-
-
+	
 	public static int getDefaultPingTime() {
-		return defaultPingTime;
+		return NetworkConfig.defaultPingTime;
 	}
-
+	
 	public static void setDefaultPingTime(int aDefaultPingTime) {
-		defaultPingTime = aDefaultPingTime;
+		NetworkConfig.defaultPingTime = aDefaultPingTime;
 	}
-
-
+	
 	public static boolean isDefaultSendCode() {
-		return defaultSendCode;
+		return NetworkConfig.defaultSendCode;
 	}
-
+	
 	public static void setDefaultSendCode(boolean aDefaultSendCode) {
-		defaultSendCode = aDefaultSendCode;
+		NetworkConfig.defaultSendCode = aDefaultSendCode;
 	}
-
-
+	
 	public static boolean isDefaultSendSender() {
-		return defaultSendSender;
+		return NetworkConfig.defaultSendSender;
 	}
-
+	
 	public static void setDefaultSendSender(boolean aDefaultSendSender) {
-		defaultSendSender = aDefaultSendSender;
+		NetworkConfig.defaultSendSender = aDefaultSendSender;
 	}
-
-
+	
 	public static boolean isAutoConsumed() {
-		return autoConsumed;
+		return NetworkConfig.autoConsumed;
 	}
-
+	
 	public static void setAutoConsumed(boolean aAutoConsumed) {
-		autoConsumed = aAutoConsumed;
+		NetworkConfig.autoConsumed = aAutoConsumed;
 	}
-
-
+	
 	public static int getDefaultExpiredTime() {
-		return defaultExpiredTime;
+		return NetworkConfig.defaultExpiredTime;
 	}
-
+	
 	public static void setDefaultExpiredTime(int aDefaultExpiredTime) {
-		defaultExpiredTime = aDefaultExpiredTime;
+		NetworkConfig.defaultExpiredTime = aDefaultExpiredTime;
 	}
-
+	
 }

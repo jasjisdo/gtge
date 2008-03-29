@@ -24,88 +24,86 @@ package com.golden.gamedev.engine.network.manipulator;
 
 // JFC
 import java.security.spec.KeySpec;
+
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.DESedeKeySpec;
 
-// GTGE NETWORKING
 import com.golden.gamedev.engine.network.DataManipulator;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class DataEncryption implements DataManipulator {
-
-	public static final int	DESEDE_ENCRYPTION_SCHEME		= 1;
-	public static final int	DES_ENCRYPTION_SCHEME			= 2;
-
 	
-	private Cipher	encryption;
-	private Cipher	decryption;
+	public static final int DESEDE_ENCRYPTION_SCHEME = 1;
+	public static final int DES_ENCRYPTION_SCHEME = 2;
 	
+	private Cipher encryption;
+	private Cipher decryption;
 	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	public DataEncryption(int encryptionScheme, String encryptionKey) {
 		try {
 			// create the key spec
-			String unicodeFormat	= "UTF8";
-			byte[] keyBytes			= encryptionKey.getBytes(unicodeFormat);
-
-			String scheme	= null;
-			KeySpec	keySpec = null;
+			String unicodeFormat = "UTF8";
+			byte[] keyBytes = encryptionKey.getBytes(unicodeFormat);
+			
+			String scheme = null;
+			KeySpec keySpec = null;
 			
 			switch (encryptionScheme) {
 				case DESEDE_ENCRYPTION_SCHEME:
-					scheme	= "DESede";
+					scheme = "DESede";
 					keySpec = new DESedeKeySpec(keyBytes);
 					break;
-					
+				
 				case DES_ENCRYPTION_SCHEME:
-					scheme	= "DES";
+					scheme = "DES";
 					keySpec = new DESKeySpec(keyBytes);
 					break;
-					
+				
 				default:
-					throw new IllegalArgumentException("Encryption scheme is not supported.");
+					throw new IllegalArgumentException(
+					        "Encryption scheme is not supported.");
 			}
 			
 			// create the secret key
-			SecretKeyFactory keyFactory	= SecretKeyFactory.getInstance(scheme);
-			SecretKey		 key		= keyFactory.generateSecret(keySpec);
-
+			SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(scheme);
+			SecretKey key = keyFactory.generateSecret(keySpec);
 			
 			// the encryption cipher
-			encryption	= Cipher.getInstance(scheme);
-			encryption.init(Cipher.ENCRYPT_MODE, key);
-
+			this.encryption = Cipher.getInstance(scheme);
+			this.encryption.init(Cipher.ENCRYPT_MODE, key);
 			
 			// the decryption cipher
-			decryption	= Cipher.getInstance(scheme);
-			decryption.init(Cipher.DECRYPT_MODE, key);
+			this.decryption = Cipher.getInstance(scheme);
+			this.decryption.init(Cipher.DECRYPT_MODE, key);
 			
-		} catch (Exception ex) {
-//			ex.printStackTrace();
+		}
+		catch (Exception ex) {
+			// ex.printStackTrace();
 			throw new RuntimeException(ex);
 		}
 	}
-
-	public DataEncryption() {
-		this(DESEDE_ENCRYPTION_SCHEME, "Secure Network Data Packet with Encryption Key");
-	}
 	
+	public DataEncryption() {
+		this(DataEncryption.DESEDE_ENCRYPTION_SCHEME,
+		        "Secure Network Data Packet with Encryption Key");
+	}
 	
 	public byte[] manipulate(byte[] data) throws Exception {
-		return encryption.doFinal(data);
+		return this.encryption.doFinal(data);
 	}
-
+	
 	public byte[] demanipulate(byte[] data) throws Exception {
-		return decryption.doFinal(data);
+		return this.decryption.doFinal(data);
 	}
 	
 }

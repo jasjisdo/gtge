@@ -21,11 +21,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
-
 /**
  * Class to get external resources object, such as <code>java.io.File</code>,
- * <code>java.io.InputStream</code>, and <code>java.net.URL</code>. <p>
- *
+ * <code>java.io.InputStream</code>, and <code>java.net.URL</code>.
+ * <p>
+ * 
  * There are four types mode of how <code>BaseIO</code> getting the external
  * resources object : <br>
  * <ul>
@@ -33,81 +33,78 @@ import java.net.URL;
  * <li>{@link #WORKING_DIRECTORY}</li>
  * <li>{@link #SYSTEM_LOADER}, and</li>
  * <li>{@link #CLASS_LOADER}</li>
- * </ul> <p>
- *
+ * </ul>
+ * <p>
+ * 
  * By default <code>BaseIO</code> class is using <code>CLASS_URL</code>.
  */
 public class BaseIO {
-
-
- /*************************** IO MODE CONSTANTS ******************************/
-
+	
+	/** ************************* IO MODE CONSTANTS ***************************** */
+	
 	/**
 	 * IO mode constant for class url.
 	 */
 	public static final int CLASS_URL = 1;
-
+	
 	/**
 	 * IO mode constant for working directory.
 	 */
 	public static final int WORKING_DIRECTORY = 2;
-
+	
 	/**
 	 * IO mode constant for class loader.
 	 */
 	public static final int CLASS_LOADER = 3;
-
+	
 	/**
 	 * IO mode constant for system loader.
 	 */
 	public static final int SYSTEM_LOADER = 4;
-
-
- /*************************** BASE CLASS LOADER ******************************/
-
-	private Class 		base;
-	private ClassLoader	loader;
-	private int 		mode;
-
-
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
-
+	
+	/** ************************* BASE CLASS LOADER ***************************** */
+	
+	private Class base;
+	private ClassLoader loader;
+	private int mode;
+	
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
+	
 	/**
 	 * Construct new <code>BaseIO</code> with specified class as the base
 	 * loader, and specified IO mode (one of {@link #CLASS_URL},
-	 * {@link #WORKING_DIRECTORY}, {@link #CLASS_LOADER},
-	 * or {@link #SYSTEM_LOADER}).
-	 *
-	 * @param base	the base class loader
-	 * @param mode	one of IO mode constants
+	 * {@link #WORKING_DIRECTORY}, {@link #CLASS_LOADER}, or
+	 * {@link #SYSTEM_LOADER}).
+	 * 
+	 * @param base the base class loader
+	 * @param mode one of IO mode constants
 	 * @see #CLASS_URL
 	 * @see #WORKING_DIRECTORY
 	 * @see #CLASS_LOADER
 	 * @see #SYSTEM_LOADER
 	 */
-    public BaseIO(Class base, int mode) {
+	public BaseIO(Class base, int mode) {
 		this.base = base;
 		this.loader = base.getClassLoader();
 		this.mode = mode;
-    }
-
-    /**
-     * Construct new <code>BaseIO</code> with specified class as the base loader
-     * using {@link #CLASS_URL} mode as the default.
-     *
-     * @param base	the base class loader
-     */
-	public BaseIO(Class base) {
-		this(base,CLASS_URL);
 	}
-
-
- /****************************************************************************/
- /******************************* INPUT URL **********************************/
- /****************************************************************************/
-
+	
+	/**
+	 * Construct new <code>BaseIO</code> with specified class as the base
+	 * loader using {@link #CLASS_URL} mode as the default.
+	 * 
+	 * @param base the base class loader
+	 */
+	public BaseIO(Class base) {
+		this(base, BaseIO.CLASS_URL);
+	}
+	
+	/** ************************************************************************* */
+	/** ***************************** INPUT URL ********************************* */
+	/** ************************************************************************* */
+	
 	/**
 	 * Returns URL from specified path with specified mode.
 	 * @param path The path to get the URL from.
@@ -120,210 +117,227 @@ public class BaseIO {
 	 */
 	public URL getURL(String path, int mode) {
 		URL url = null;
-
+		
 		try {
 			switch (mode) {
 				case CLASS_URL:
-					url = base.getResource(path);
-				break;
-
+					url = this.base.getResource(path);
+					break;
+				
 				case WORKING_DIRECTORY:
 					File f = new File(path);
-					if (f.exists()) url = f.toURL();
-				break;
-
+					if (f.exists()) {
+						url = f.toURL();
+					}
+					break;
+				
 				case CLASS_LOADER:
-					url = loader.getResource(path);
-				break;
-
+					url = this.loader.getResource(path);
+					break;
+				
 				case SYSTEM_LOADER:
 					url = ClassLoader.getSystemResource(path);
-				break;
+					break;
 			}
-		} catch (Exception e) {	}
-
-		if (url == null) {
-			throw new RuntimeException(getException(path, mode, "getURL"));
 		}
-
+		catch (Exception e) {
+		}
+		
+		if (url == null) {
+			throw new RuntimeException(this.getException(path, mode, "getURL"));
+		}
+		
 		return url;
 	}
-
+	
 	/**
-	 * Returns URL from specified path with this {@link BaseIO} default
-	 * mode.
+	 * Returns URL from specified path with this {@link BaseIO} default mode.
 	 * @param path The path to retrieve the URL from.
 	 * @return The {@link URL} of the given path.
 	 * @see #getMode()
 	 */
 	public URL getURL(String path) {
 		URL url = null;
-
+		
 		try {
-			url = getURL(path, mode);
-		} catch (Exception e) {
+			url = this.getURL(path, this.mode);
 		}
-
+		catch (Exception e) {
+		}
+		
 		if (url == null) {
 			// smart resource locater
 			int smart = 0;
-			while (url == null && !getModeString(++smart).equals("[UNKNOWN-MODE]")) {
+			while (url == null
+			        && !this.getModeString(++smart).equals("[UNKNOWN-MODE]")) {
 				try {
-					url = getURL(path, smart);
-				} catch (Exception e) {
+					url = this.getURL(path, smart);
+				}
+				catch (Exception e) {
 				}
 			}
-
+			
 			if (url == null) {
-				throw new RuntimeException(getException(path, mode, "getURL"));
+				throw new RuntimeException(this.getException(path, this.mode,
+				        "getURL"));
 			}
-
-			mode = smart;
+			
+			this.mode = smart;
 		}
-
+		
 		return url;
 	}
-
-
- /****************************************************************************/
- /****************************** INPUT STREAM ********************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** **************************** INPUT STREAM ******************************* */
+	/** ************************************************************************* */
+	
 	/**
 	 * Returns {@link InputStream} from specified path with specified mode.
 	 * @param path The path to retrieve an {@link InputStream} from.
 	 * @param mode The mode to use for retrieving the {@link InputStream}.
 	 * @return The {@link InputStream}.
-     * @see #CLASS_LOADER
-     * @see #CLASS_URL
-     * @see #SYSTEM_LOADER
-     * @see #WORKING_DIRECTORY
+	 * @see #CLASS_LOADER
+	 * @see #CLASS_URL
+	 * @see #SYSTEM_LOADER
+	 * @see #WORKING_DIRECTORY
 	 */
 	public InputStream getStream(String path, int mode) {
 		InputStream stream = null;
-
+		
 		try {
 			switch (mode) {
 				case CLASS_URL:
-					stream = base.getResourceAsStream(path);
-				break;
-
+					stream = this.base.getResourceAsStream(path);
+					break;
+				
 				case WORKING_DIRECTORY:
 					stream = new File(path).toURL().openStream();
-				break;
-
+					break;
+				
 				case CLASS_LOADER:
-					stream = loader.getResourceAsStream(path);
-				break;
-
+					stream = this.loader.getResourceAsStream(path);
+					break;
+				
 				case SYSTEM_LOADER:
 					stream = ClassLoader.getSystemResourceAsStream(path);
-				break;
+					break;
 			}
-		} catch (Exception e) { }
-
-		if (stream == null) {
-			throw new RuntimeException(getException(path, mode, "getStream"));
 		}
-
+		catch (Exception e) {
+		}
+		
+		if (stream == null) {
+			throw new RuntimeException(this.getException(path, mode,
+			        "getStream"));
+		}
+		
 		return stream;
 	}
-
+	
 	/**
 	 * Returns input stream from specified path with this <code>BaseIO</code>
 	 * default mode.
 	 * @param path The path to retrieve an {@link InputStream} from.
-     * @return The {@link InputStream}.
-     * @see #getMode()
+	 * @return The {@link InputStream}.
+	 * @see #getMode()
 	 */
 	public InputStream getStream(String path) {
 		InputStream stream = null;
-
+		
 		try {
-			stream = getStream(path, mode);
-		} catch (Exception e) {
+			stream = this.getStream(path, this.mode);
 		}
-
+		catch (Exception e) {
+		}
+		
 		if (stream == null) {
 			// smart resource locater
 			int smart = 0;
-			while (stream == null && !getModeString(++smart).equals("[UNKNOWN-MODE]")) {
+			while (stream == null
+			        && !this.getModeString(++smart).equals("[UNKNOWN-MODE]")) {
 				try {
-					stream = getStream(path, smart);
-				} catch (Exception e) {
+					stream = this.getStream(path, smart);
+				}
+				catch (Exception e) {
 				}
 			}
-
+			
 			if (stream == null) {
-				throw new RuntimeException(getException(path, mode, "getStream"));
+				throw new RuntimeException(this.getException(path, this.mode,
+				        "getStream"));
 			}
-
-			mode = smart;
+			
+			this.mode = smart;
 		}
-
+		
 		return stream;
 	}
-
-
- /****************************************************************************/
- /******************************* INPUT FILE *********************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** ***************************** INPUT FILE ******************************** */
+	/** ************************************************************************* */
+	
 	/**
 	 * Return file from specified path with specified mode.
 	 * @param path The path to retrieve an {@link File} from.
-     * @param mode The mode to use for retrieving the {@link File}.
-     * @return The {@link File}.
-     * @see #CLASS_LOADER
-     * @see #CLASS_URL
-     * @see #SYSTEM_LOADER
-     * @see #WORKING_DIRECTORY
+	 * @param mode The mode to use for retrieving the {@link File}.
+	 * @return The {@link File}.
+	 * @see #CLASS_LOADER
+	 * @see #CLASS_URL
+	 * @see #SYSTEM_LOADER
+	 * @see #WORKING_DIRECTORY
 	 */
 	public File getFile(String path, int mode) {
 		File file = null;
-
+		
 		try {
 			switch (mode) {
 				case CLASS_URL:
-					file = new File(base.getResource(path).
-									getFile().replaceAll("%20", " "));
-				break;
-
+					file = new File(this.base.getResource(path).getFile()
+					        .replaceAll("%20", " "));
+					break;
+				
 				case WORKING_DIRECTORY:
 					file = new File(path);
-				break;
-
+					break;
+				
 				case CLASS_LOADER:
-					file = new File(loader.getResource(path).
-						   			getFile().replaceAll("%20", " "));
-				break;
-
+					file = new File(this.loader.getResource(path).getFile()
+					        .replaceAll("%20", " "));
+					break;
+				
 				case SYSTEM_LOADER:
-					file = new File(ClassLoader.getSystemResource(path).
-						   			getFile().replaceAll("%20", " "));
-				break;
+					file = new File(ClassLoader.getSystemResource(path)
+					        .getFile().replaceAll("%20", " "));
+					break;
 			}
-		} catch (Exception e) { }
-
-		if (file == null) {
-			throw new RuntimeException(getException(path, mode, "getFile"));
 		}
-
+		catch (Exception e) {
+		}
+		
+		if (file == null) {
+			throw new RuntimeException(this.getException(path, mode, "getFile"));
+		}
+		
 		return file;
 	}
-
+	
 	/**
 	 * Returns file from specified path with this <code>BaseIO</code> default
-	 * mode. <p>
-	 *
-	 * File object usually used only for writing to disk. <p>
-	 *
+	 * mode.
+	 * <p>
+	 * 
+	 * File object usually used only for writing to disk.
+	 * <p>
+	 * 
 	 * <b>Caution:</b> always try to avoid using <code>java.io.File</code>
 	 * object (this method), because <code>java.io.File</code> is system
 	 * dependent and not working inside jar file, use <code>java.net.URL</code>
-	 * OR <code>java.io.InputStream</code> instead. <p>
+	 * OR <code>java.io.InputStream</code> instead.
+	 * <p>
 	 * @param path The path to retrieve an {@link File} from.
-     * @return The {@link File}.
+	 * @return The {@link File}.
 	 * @see #getURL(String)
 	 * @see #getStream(String)
 	 * @see #setFile(String)
@@ -331,126 +345,135 @@ public class BaseIO {
 	 */
 	public File getFile(String path) {
 		File file = null;
-
+		
 		try {
-			file = getFile(path, mode);
-		} catch (Exception e) {
+			file = this.getFile(path, this.mode);
 		}
-
+		catch (Exception e) {
+		}
+		
 		if (file == null) {
 			// smart resource locater
 			int smart = 0;
-			while (file == null && !getModeString(++smart).equals("[UNKNOWN-MODE]")) {
+			while (file == null
+			        && !this.getModeString(++smart).equals("[UNKNOWN-MODE]")) {
 				try {
-					file = getFile(path, smart);
-				} catch (Exception e) {
+					file = this.getFile(path, smart);
+				}
+				catch (Exception e) {
 				}
 			}
-
+			
 			if (file == null) {
-				throw new RuntimeException(getException(path, mode, "getFile"));
+				throw new RuntimeException(this.getException(path, this.mode,
+				        "getFile"));
 			}
-
-			mode = smart;
+			
+			this.mode = smart;
 		}
-
+		
 		return file;
 	}
-
-
- /****************************************************************************/
- /***************************** OUTPUT FILE **********************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** *************************** OUTPUT FILE ********************************* */
+	/** ************************************************************************* */
+	
 	/**
 	 * Returns file on specified path with specified mode for processing.
 	 * @param path The path to retrieve a {@link File} from.
-     * @param mode The mode to use for retrieving the {@link File}.
-     * @return The {@link File}.
-     * @see #CLASS_LOADER
-     * @see #CLASS_URL
-     * @see #SYSTEM_LOADER
-     * @see #WORKING_DIRECTORY
+	 * @param mode The mode to use for retrieving the {@link File}.
+	 * @return The {@link File}.
+	 * @see #CLASS_LOADER
+	 * @see #CLASS_URL
+	 * @see #SYSTEM_LOADER
+	 * @see #WORKING_DIRECTORY
 	 */
 	public File setFile(String path, int mode) {
 		File file = null;
-
+		
 		try {
 			switch (mode) {
 				case CLASS_URL:
-					file = new File(base.getResource("").
-									getFile().replaceAll("%20"," ") +
-									File.separator + path);
-				break;
-
+					file = new File(this.base.getResource("").getFile()
+					        .replaceAll("%20", " ")
+					        + File.separator + path);
+					break;
+				
 				case WORKING_DIRECTORY:
 					file = new File(path);
-				break;
-
+					break;
+				
 				case CLASS_LOADER:
-					file = new File(loader.getResource("").
-									getFile().replaceAll("%20"," ") +
-									File.separator + path);
-				break;
-
+					file = new File(this.loader.getResource("").getFile()
+					        .replaceAll("%20", " ")
+					        + File.separator + path);
+					break;
+				
 				case SYSTEM_LOADER:
-					file = new File(ClassLoader.getSystemResource("").
-									getFile().replaceAll("%20"," ") +
-									File.separator + path);
-				break;
+					file = new File(ClassLoader.getSystemResource("").getFile()
+					        .replaceAll("%20", " ")
+					        + File.separator + path);
+					break;
 			}
-		} catch (Exception e) { }
-
-		if (file == null) {
-			throw new RuntimeException(getException(path, mode, "setFile"));
 		}
-
+		catch (Exception e) {
+		}
+		
+		if (file == null) {
+			throw new RuntimeException(this.getException(path, mode, "setFile"));
+		}
+		
 		return file;
 	}
-
+	
 	/**
-	 * Returns file on specified path with this <code>BaseIO</code> default mode
-	 * for processing.
-     * @param path The path to retrieve an {@link File} from.
-     * @return The {@link File}.
+	 * Returns file on specified path with this <code>BaseIO</code> default
+	 * mode for processing.
+	 * @param path The path to retrieve an {@link File} from.
+	 * @return The {@link File}.
 	 */
 	public File setFile(String path) {
 		File file = null;
-
+		
 		try {
-			file = setFile(path, mode);
-		} catch (Exception e) {
+			file = this.setFile(path, this.mode);
 		}
-
+		catch (Exception e) {
+		}
+		
 		if (file == null) {
 			// smart resource locater
 			int smart = 0;
-			while (file == null && !getModeString(++smart).equals("[UNKNOWN-MODE]")) {
+			while (file == null
+			        && !this.getModeString(++smart).equals("[UNKNOWN-MODE]")) {
 				try {
-					file = setFile(path, smart);
-				} catch (Exception e) {
+					file = this.setFile(path, smart);
+				}
+				catch (Exception e) {
 				}
 			}
-
+			
 			if (file == null) {
-				throw new RuntimeException(getException(path, mode, "setFile"));
+				throw new RuntimeException(this.getException(path, this.mode,
+				        "setFile"));
 			}
-
-			mode = smart;
+			
+			this.mode = smart;
 		}
-
+		
 		return file;
 	}
-
-
- /****************************************************************************/
- /************************* IO MODE CONSTANTS ********************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** *********************** IO MODE CONSTANTS ******************************* */
+	/** ************************************************************************* */
+	
 	/**
-	 * Returns the root path of this {@link BaseIO} if using specified mode.
-	 * The root path is the root where all the resources will be taken from. <p>
-	 *
+	 * Returns the root path of this {@link BaseIO} if using specified mode. The
+	 * root path is the root where all the resources will be taken from.
+	 * <p>
+	 * 
 	 * For example : <br>
 	 * The root path = "c:\games\spaceinvader" <br>
 	 * The resource name = "images\background.png" <br>
@@ -462,21 +485,21 @@ public class BaseIO {
 	public String getRootPath(int mode) {
 		switch (mode) {
 			case CLASS_URL:
-				return base.getResource("").toString();
-
+				return this.base.getResource("").toString();
+				
 			case WORKING_DIRECTORY:
 				return System.getProperty("user.dir") + File.separator;
-
+				
 			case CLASS_LOADER:
-				return loader.getResource("").toString();
-
+				return this.loader.getResource("").toString();
+				
 			case SYSTEM_LOADER:
 				return ClassLoader.getSystemResource("").toString();
 		}
-
+		
 		return "[UNKNOWN-MODE]";
 	}
-
+	
 	/**
 	 * Returns the official statement of specified IO mode, or
 	 * <code>[UNKNOWN-MODE]</code> if the IO mode is undefined.
@@ -486,15 +509,19 @@ public class BaseIO {
 	 */
 	public String getModeString(int mode) {
 		switch (mode) {
-			case CLASS_URL: 		return "Class-URL";
-			case WORKING_DIRECTORY: return "Working-Directory";
-			case CLASS_LOADER: 		return "Class-Loader";
-			case SYSTEM_LOADER: 	return "System-Loader";
+			case CLASS_URL:
+				return "Class-URL";
+			case WORKING_DIRECTORY:
+				return "Working-Directory";
+			case CLASS_LOADER:
+				return "Class-Loader";
+			case SYSTEM_LOADER:
+				return "System-Loader";
 		}
-
+		
 		return "[UNKNOWN-MODE]";
 	}
-
+	
 	/**
 	 * Returns the default IO mode used for getting the resources.
 	 * @return The default IO mode.
@@ -502,9 +529,9 @@ public class BaseIO {
 	 * @see #getModeString(int)
 	 */
 	public int getMode() {
-		return mode;
+		return this.mode;
 	}
-
+	
 	/**
 	 * Sets the default IO mode used for getting the resources.
 	 * @param mode The new default io mode.
@@ -517,8 +544,7 @@ public class BaseIO {
 	public void setMode(int mode) {
 		this.mode = mode;
 	}
-
-
+	
 	/**
 	 * Returns exception string used whenever resource can not be found.
 	 * @param path The path that was retrived.
@@ -527,14 +553,14 @@ public class BaseIO {
 	 * @return The exception description string.
 	 */
 	protected String getException(String path, int mode, String method) {
-		return "Resource not found (" + this + "): " + getRootPath(mode) + path;
+		return "Resource not found (" + this + "): " + this.getRootPath(mode)
+		        + path;
 	}
-
-
- /****************************************************************************/
- /************************* BASE CLASS LOADER ********************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** *********************** BASE CLASS LOADER ******************************* */
+	/** ************************************************************************* */
+	
 	/**
 	 * Sets the base class where the resources will be taken from.
 	 * @param base The base {@link Class}.
@@ -544,33 +570,32 @@ public class BaseIO {
 		this.base = base;
 		this.loader = base.getClassLoader();
 	}
-
+	
 	/**
 	 * Returns the base class where the resources will be taken from.
 	 * @return The base {@link Class}.
 	 * @see #setBase(Class)
 	 */
 	public Class getBase() {
-		return base;
+		return this.base;
 	}
-
+	
 	/**
 	 * Returns the class loader associated with this {@link BaseIO}.
 	 * @return The {@link ClassLoader}.
 	 * @see #setBase(Class)
 	 */
 	public ClassLoader getLoader() {
-		return loader;
+		return this.loader;
 	}
-
+	
 	/**
 	 * @see java.lang.Object#toString()
 	 */
 	public String toString() {
-		return super.toString() + " " +
-			"[mode=" + getModeString(this.mode) +
-			", baseClass=" + base +
-			", classLoader=" + loader + "]";
+		return super.toString() + " " + "[mode="
+		        + this.getModeString(this.mode) + ", baseClass=" + this.base
+		        + ", classLoader=" + this.loader + "]";
 	}
-
+	
 }

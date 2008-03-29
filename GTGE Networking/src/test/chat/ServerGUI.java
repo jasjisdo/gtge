@@ -24,6 +24,7 @@ package test.chat;
 
 // JFC
 import java.io.IOException;
+
 import javax.swing.DefaultListModel;
 
 import com.golden.gamedev.engine.BaseClient;
@@ -32,93 +33,100 @@ import com.golden.gamedev.engine.network.packet.NetworkMessage;
 import com.golden.gamedev.engine.network.tcp.TCPServer;
 
 /**
- *
- * @author  Paulus Tuerah
+ * 
+ * @author Paulus Tuerah
  */
 public class ServerGUI extends javax.swing.JFrame implements Runnable {
 	
-	private TCPServer			server;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6033826453948313300L;
 	
-	private DefaultListModel	listOnline = new DefaultListModel();
+	private TCPServer server;
 	
-		
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	private DefaultListModel listOnline = new DefaultListModel();
+	
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	/** Creates new form ServerGUI */
 	public ServerGUI(TCPServer server) {
-		initComponents();
+		this.initComponents();
 		
 		this.server = server;
-		lstOnline.setModel(listOnline);
+		this.lstOnline.setModel(this.listOnline);
 		
 		new Thread(this).start();
 		
 		this.setSize(640, 480);
-		setLocationRelativeTo(null);
+		this.setLocationRelativeTo(null);
 	}
-	
 	
 	public void run() {
 		while (true) {
 			try {
-				server.update(100);
-			} catch (IOException ex) {
+				this.server.update(100);
+			}
+			catch (IOException ex) {
 				ex.printStackTrace();
 				System.exit(-1);
 			}
 			
-			
 			// handle new connection
 			// set as login client
-			BaseClient[] clients = server.getConnectingClients();
-			for (int i=0;i < clients.length;i++) {
+			BaseClient[] clients = this.server.getConnectingClients();
+			for (int i = 0; i < clients.length; i++) {
 				clients[i].setGroupName("LOGIN");
-
-				appendText("> " + clients[i].getRemoteDetail() + " connected.\n");
+				
+				this.appendText("> " + clients[i].getRemoteDetail()
+				        + " connected.\n");
 			}
-
 			
 			// handle disconnected client
-			clients = server.getDisconnectedClients();
-			for (int i=0;i < clients.length;i++) {
+			clients = this.server.getDisconnectedClients();
+			for (int i = 0; i < clients.length; i++) {
 				String nick = (String) clients[i].getInfo();
 				String message = "> " + nick + " left.";
-				listOnline.removeElement(nick);
-
-				try {					
-					server.broadcastPacket(new NetworkMessage(message));
+				this.listOnline.removeElement(nick);
+				
+				try {
+					this.server.broadcastPacket(new NetworkMessage(message));
 					
-					appendText(message + "\n");
+					this.appendText(message + "\n");
 					
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
 			
 			// handle new message
-			clients = server.getReceivedPacketClients();
-			for (int i=0;i < clients.length;i++) {
-				NetworkPacket[] receivedPackets = clients[i].getReceivedPackets();
+			clients = this.server.getReceivedPacketClients();
+			for (int i = 0; i < clients.length; i++) {
+				NetworkPacket[] receivedPackets = clients[i]
+				        .getReceivedPackets();
 				
-				for (int j=0;j < receivedPackets.length;j++) {
+				for (int j = 0; j < receivedPackets.length; j++) {
 					NetworkMessage packet = (NetworkMessage) receivedPackets[j];
 					
 					// handle login client
 					if (clients[i].isGroupName("LOGIN")) {
-						handleLoginClient(clients[i], packet);
+						this.handleLoginClient(clients[i], packet);
 						
-					// handle chat client
-					} else {
-						handleChatClient(clients[i], packet);
+						// handle chat client
+					}
+					else {
+						this.handleChatClient(clients[i], packet);
 					}
 				}
 			}
 			
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException ex) {
+			}
+			catch (InterruptedException ex) {
 				ex.printStackTrace();
 			}
 		}
@@ -128,145 +136,153 @@ public class ServerGUI extends javax.swing.JFrame implements Runnable {
 		String nick = packet.getMessage();
 		client.setInfo(nick);
 		client.setGroupName("CHAT"); // change to chat client
-		listOnline.addElement(nick);
+		this.listOnline.addElement(nick);
 		
 		try {
 			String message = "> " + nick + " joined.";
 			
-			server.broadcastPacket(new NetworkMessage(message), client);
-			appendText(message + "\n");
+			this.server.broadcastPacket(new NetworkMessage(message), client);
+			this.appendText(message + "\n");
 			
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
-		}		
+		}
 	}
 	
 	private void handleChatClient(BaseClient client, NetworkMessage packet) {
 		try {
 			String message = client.getInfo() + ": " + packet.getMessage();
 			
-			server.broadcastPacket(new NetworkMessage(message), client);
-			appendText(message + "\n");
+			this.server.broadcastPacket(new NetworkMessage(message), client);
+			this.appendText(message + "\n");
 			
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
 		}
 	}
-	
 	
 	private void appendText(String text) {
-		txaChat.append(text);
-
-		txaChat.setCaretPosition(txaChat.getDocument().getLength());
-	}
+		this.txaChat.append(text);
 		
+		this.txaChat.setCaretPosition(this.txaChat.getDocument().getLength());
+	}
 	
-	/** This method is called from within the constructor to
-	 * initialize the form.
-	 * WARNING: Do NOT modify this code. The content of this method is
-	 * always regenerated by the Form Editor.
+	/**
+	 * This method is called from within the constructor to initialize the form.
+	 * WARNING: Do NOT modify this code. The content of this method is always
+	 * regenerated by the Form Editor.
 	 */
-    // <editor-fold defaultstate="collapsed" desc=" Generated Code ">//GEN-BEGIN:initComponents
-    private void initComponents() {
-        javax.swing.JLabel jLabel1;
-        javax.swing.JPanel jPanel1;
-        javax.swing.JPanel jPanel3;
-        javax.swing.JScrollPane jScrollPane1;
-        javax.swing.JScrollPane jScrollPane2;
-
-        jPanel3 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        txtMessage = new javax.swing.JTextField();
-        btnSend = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txaChat = new javax.swing.JTextArea();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        lstOnline = new javax.swing.JList();
-
-        FormListener formListener = new FormListener();
-
-        getContentPane().setLayout(new java.awt.BorderLayout(5, 5));
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Chat Server");
-        jPanel3.setLayout(new java.awt.BorderLayout(5, 5));
-
-        jPanel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        jPanel1.setLayout(new java.awt.BorderLayout(5, 0));
-
-        jLabel1.setText("Broadcast Message :");
-        jPanel1.add(jLabel1, java.awt.BorderLayout.WEST);
-
-        txtMessage.addActionListener(formListener);
-
-        jPanel1.add(txtMessage, java.awt.BorderLayout.CENTER);
-
-        btnSend.setText("Send");
-        btnSend.addActionListener(formListener);
-
-        jPanel1.add(btnSend, java.awt.BorderLayout.EAST);
-
-        jPanel3.add(jPanel1, java.awt.BorderLayout.NORTH);
-
-        txaChat.setEditable(false);
-        jScrollPane1.setViewportView(txaChat);
-
-        jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
-
-        jScrollPane2.setViewportView(lstOnline);
-
-        jPanel3.add(jScrollPane2, java.awt.BorderLayout.SOUTH);
-
-        getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
-
-        pack();
-    }
-
-    // Code for dispatching events from components to event handlers.
-
-    private class FormListener implements java.awt.event.ActionListener {
-        FormListener() {}
-        public void actionPerformed(java.awt.event.ActionEvent evt) {
-            if (evt.getSource() == txtMessage) {
-                ServerGUI.this.btnSendActionPerformed(evt);
-            }
-            else if (evt.getSource() == btnSend) {
-                ServerGUI.this.btnSendActionPerformed(evt);
-            }
-        }
-    }// </editor-fold>//GEN-END:initComponents
-
-	private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSendActionPerformed
-		String message = txtMessage.getText().trim();
-		if (message.length() == 0) return;
+	// <editor-fold defaultstate="collapsed" desc=" Generated Code
+	// ">//GEN-BEGIN:initComponents
+	private void initComponents() {
+		javax.swing.JLabel jLabel1;
+		javax.swing.JPanel jPanel1;
+		javax.swing.JPanel jPanel3;
+		javax.swing.JScrollPane jScrollPane1;
+		javax.swing.JScrollPane jScrollPane2;
+		
+		jPanel3 = new javax.swing.JPanel();
+		jPanel1 = new javax.swing.JPanel();
+		jLabel1 = new javax.swing.JLabel();
+		this.txtMessage = new javax.swing.JTextField();
+		this.btnSend = new javax.swing.JButton();
+		jScrollPane1 = new javax.swing.JScrollPane();
+		this.txaChat = new javax.swing.JTextArea();
+		jScrollPane2 = new javax.swing.JScrollPane();
+		this.lstOnline = new javax.swing.JList();
+		
+		FormListener formListener = new FormListener();
+		
+		this.getContentPane().setLayout(new java.awt.BorderLayout(5, 5));
+		
+		this
+		        .setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		this.setTitle("Chat Server");
+		jPanel3.setLayout(new java.awt.BorderLayout(5, 5));
+		
+		jPanel3.setBorder(javax.swing.BorderFactory.createEmptyBorder(10, 10,
+		        10, 10));
+		jPanel1.setLayout(new java.awt.BorderLayout(5, 0));
+		
+		jLabel1.setText("Broadcast Message :");
+		jPanel1.add(jLabel1, java.awt.BorderLayout.WEST);
+		
+		this.txtMessage.addActionListener(formListener);
+		
+		jPanel1.add(this.txtMessage, java.awt.BorderLayout.CENTER);
+		
+		this.btnSend.setText("Send");
+		this.btnSend.addActionListener(formListener);
+		
+		jPanel1.add(this.btnSend, java.awt.BorderLayout.EAST);
+		
+		jPanel3.add(jPanel1, java.awt.BorderLayout.NORTH);
+		
+		this.txaChat.setEditable(false);
+		jScrollPane1.setViewportView(this.txaChat);
+		
+		jPanel3.add(jScrollPane1, java.awt.BorderLayout.CENTER);
+		
+		jScrollPane2.setViewportView(this.lstOnline);
+		
+		jPanel3.add(jScrollPane2, java.awt.BorderLayout.SOUTH);
+		
+		this.getContentPane().add(jPanel3, java.awt.BorderLayout.CENTER);
+		
+		this.pack();
+	}
+	
+	// Code for dispatching events from components to event handlers.
+	
+	private class FormListener implements java.awt.event.ActionListener {
+		
+		FormListener() {
+		}
+		
+		public void actionPerformed(java.awt.event.ActionEvent evt) {
+			if (evt.getSource() == ServerGUI.this.txtMessage) {
+				ServerGUI.this.btnSendActionPerformed(evt);
+			}
+			else if (evt.getSource() == ServerGUI.this.btnSend) {
+				ServerGUI.this.btnSendActionPerformed(evt);
+			}
+		}
+	}// </editor-fold>//GEN-END:initComponents
+	
+	private void btnSendActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_btnSendActionPerformed
+		String message = this.txtMessage.getText().trim();
+		if (message.length() == 0) {
+			return;
+		}
 		
 		message = "> " + message;
-
+		
 		try {
-			server.broadcastPacket(new NetworkMessage(message));
+			this.server.broadcastPacket(new NetworkMessage(message));
 			
-			txtMessage.selectAll();
-			txaChat.append(message + "\n");
-		} catch (IOException ex) {
+			this.txtMessage.selectAll();
+			this.txaChat.append(message + "\n");
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
 		}
-	}//GEN-LAST:event_btnSendActionPerformed
-
+	}// GEN-LAST:event_btnSendActionPerformed
 	
-//    public static void main(String args[]) {
-//        java.awt.EventQueue.invokeLater(new Runnable() {
-//            public void run() {
-//                new ServerGUI().setVisible(true);
-//            }
-//        } );
-//    }
+	// public static void main(String args[]) {
+	// java.awt.EventQueue.invokeLater(new Runnable() {
+	// public void run() {
+	// new ServerGUI().setVisible(true);
+	// }
+	// } );
+	// }
 	
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnSend;
-    private javax.swing.JList lstOnline;
-    private javax.swing.JTextArea txaChat;
-    private javax.swing.JTextField txtMessage;
-    // End of variables declaration//GEN-END:variables
+	// Variables declaration - do not modify//GEN-BEGIN:variables
+	private javax.swing.JButton btnSend;
+	private javax.swing.JList lstOnline;
+	private javax.swing.JTextArea txaChat;
+	private javax.swing.JTextField txtMessage;
+	// End of variables declaration//GEN-END:variables
 	
 }

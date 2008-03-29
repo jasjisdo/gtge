@@ -26,394 +26,462 @@ package com.golden.gamedev.engine.network.packet;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-
-// GTGE
-import com.golden.gamedev.engine.network.*;
 import java.util.HashMap;
 
+import com.golden.gamedev.engine.network.NetworkConfig;
+import com.golden.gamedev.engine.network.NetworkPacket;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public final class NetworkObject extends NetworkPacket {
-
-	public static final Class INTEGER_TYPE		= Integer.TYPE, 
-							  DOUBLE_TYPE		= Double.TYPE,
-							  BOOLEAN_TYPE		= Boolean.TYPE,
-							  FLOAT_TYPE		= Float.TYPE,
-							  LONG_TYPE			= Long.TYPE,
-							  SHORT_TYPE		= Short.TYPE,
-							  BYTE_TYPE			= Byte.TYPE,
-							  CHARACTER_TYPE	= Character.TYPE;
 	
-
-	private Class		type;
-
-	private int			intValue;
-	private double		doubleValue;
-	private boolean		booleanValue;
-	private float		floatValue;
-	private long		longValue;
-	private short		shortValue;
-	private byte		byteValue;
-	private char		charValue;
-	private String		stringValue;
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5501520858235039272L;
 	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	public static final Class INTEGER_TYPE = Integer.TYPE,
+	        DOUBLE_TYPE = Double.TYPE, BOOLEAN_TYPE = Boolean.TYPE,
+	        FLOAT_TYPE = Float.TYPE, LONG_TYPE = Long.TYPE,
+	        SHORT_TYPE = Short.TYPE, BYTE_TYPE = Byte.TYPE,
+	        CHARACTER_TYPE = Character.TYPE;
+	
+	private Class type;
+	
+	private int intValue;
+	private double doubleValue;
+	private boolean booleanValue;
+	private float floatValue;
+	private long longValue;
+	private short shortValue;
+	private byte byteValue;
+	private char charValue;
+	private String stringValue;
+	
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	/** Creates a new instance of NetworkObject */
 	public NetworkObject(short id) {
 		this.setID(id);
-		this.type			= null; // send id only
+		this.type = null; // send id only
 		
-		setCompressed(false);
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, Class type) {
 		this.setID(id);
-		this.type			= type;
+		this.type = type;
 		
-		setCompressed(type.equals(STRING_TYPE));
+		this.setCompressed(type.equals(NetworkPacket.STRING_TYPE));
 	}
 	
 	public NetworkObject(short id, int intValue) {
 		this.setID(id);
-		this.intValue		= intValue;
-		this.type			= INTEGER_TYPE;
+		this.intValue = intValue;
+		this.type = NetworkObject.INTEGER_TYPE;
 		
-		setCompressed(false);
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, double doubleValue) {
 		this.setID(id);
-		this.doubleValue	= doubleValue;
-		this.type			= DOUBLE_TYPE;
+		this.doubleValue = doubleValue;
+		this.type = NetworkObject.DOUBLE_TYPE;
 		
-		setCompressed(false);
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, boolean booleanValue) {
 		this.setID(id);
-		this.booleanValue	= booleanValue;
-		this.type			= BOOLEAN_TYPE;
+		this.booleanValue = booleanValue;
+		this.type = NetworkObject.BOOLEAN_TYPE;
 		
-		setCompressed(false);
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, float floatValue) {
 		this.setID(id);
-		this.floatValue		= floatValue;
-		this.type			= FLOAT_TYPE;
+		this.floatValue = floatValue;
+		this.type = NetworkObject.FLOAT_TYPE;
 		
-		setCompressed(false);
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, long longValue) {
 		this.setID(id);
-		this.longValue		= longValue;
-		this.type			= LONG_TYPE;
+		this.longValue = longValue;
+		this.type = NetworkObject.LONG_TYPE;
 		
-		setCompressed(false);
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, short shortValue) {
 		this.setID(id);
-		this.shortValue		= shortValue;
-		this.type			= SHORT_TYPE;
-	
-		setCompressed(false);
+		this.shortValue = shortValue;
+		this.type = NetworkObject.SHORT_TYPE;
+		
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, byte byteValue) {
 		this.setID(id);
-		this.byteValue		= byteValue;
-		this.type			= BYTE_TYPE;
+		this.byteValue = byteValue;
+		this.type = NetworkObject.BYTE_TYPE;
 		
-		setCompressed(false);
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, char charValue) {
 		this.setID(id);
-		this.charValue		= charValue;
-		this.type			= INTEGER_TYPE;
+		this.charValue = charValue;
+		this.type = NetworkObject.INTEGER_TYPE;
 		
-		setCompressed(false);
+		this.setCompressed(false);
 	}
+	
 	public NetworkObject(short id, String stringValue) {
 		this.setID(id);
-		this.stringValue	= stringValue;
-		this.type			= String.class;
+		this.stringValue = stringValue;
+		this.type = String.class;
 		
-		setCompressed(true);
+		this.setCompressed(true);
 	}
-	
-	
 	
 	public void read(DataInputStream input) throws IOException {
 		// read the packet data
-		if (type == null) return;	// send id only
+		if (this.type == null) {
+			return; // send id only
+		}
 		
-		
-		if (type == INTEGER_TYPE) {
-			intValue		= input.readInt();
-
-		} else if (type == DOUBLE_TYPE) {
-			doubleValue		= input.readDouble();
-
-		} else if (type == BOOLEAN_TYPE) {
-			booleanValue	= input.readBoolean();
-
-		} else if (type == FLOAT_TYPE) {
-			floatValue		= input.readFloat();
-
-		} else if (type == LONG_TYPE) {
-			longValue		= input.readLong();
-
-		} else if (type == SHORT_TYPE) {
-			shortValue		= input.readShort();
-
-		} else if (type == BYTE_TYPE) {
-			byteValue		= input.readByte();
-
-		} else if (type == CHARACTER_TYPE) {
-			charValue		= input.readChar();
-
-		} else {
-			stringValue		= input.readUTF();
-		}			
+		if (this.type == NetworkObject.INTEGER_TYPE) {
+			this.intValue = input.readInt();
+			
+		}
+		else if (this.type == NetworkObject.DOUBLE_TYPE) {
+			this.doubleValue = input.readDouble();
+			
+		}
+		else if (this.type == NetworkObject.BOOLEAN_TYPE) {
+			this.booleanValue = input.readBoolean();
+			
+		}
+		else if (this.type == NetworkObject.FLOAT_TYPE) {
+			this.floatValue = input.readFloat();
+			
+		}
+		else if (this.type == NetworkObject.LONG_TYPE) {
+			this.longValue = input.readLong();
+			
+		}
+		else if (this.type == NetworkObject.SHORT_TYPE) {
+			this.shortValue = input.readShort();
+			
+		}
+		else if (this.type == NetworkObject.BYTE_TYPE) {
+			this.byteValue = input.readByte();
+			
+		}
+		else if (this.type == NetworkObject.CHARACTER_TYPE) {
+			this.charValue = input.readChar();
+			
+		}
+		else {
+			this.stringValue = input.readUTF();
+		}
 	}
 	
 	public void write(DataOutputStream output) throws IOException {
 		// write the packet data
-		if (type == null) return;	// send id only
+		if (this.type == null) {
+			return; // send id only
+		}
 		
-		
-		if (type == INTEGER_TYPE) {
-			output.writeInt(intValue);
-
-		} else if (type == DOUBLE_TYPE) {
-			output.writeDouble(doubleValue);
-
-		} else if (type == BOOLEAN_TYPE) {
-			output.writeBoolean(booleanValue);
-
-		} else if (type == FLOAT_TYPE) {
-			output.writeFloat(floatValue);
-
-		} else if (type == LONG_TYPE) {
-			output.writeLong(longValue);
-
-		} else if (type == SHORT_TYPE) {
-			output.writeShort(shortValue);
-
-		} else if (type == BYTE_TYPE) {
-			output.writeByte(byteValue);
-
-		} else if (type == CHARACTER_TYPE) {
-			output.writeChar(charValue);
-
-		} else {
-			output.writeUTF(stringValue);
-		}			
+		if (this.type == NetworkObject.INTEGER_TYPE) {
+			output.writeInt(this.intValue);
+			
+		}
+		else if (this.type == NetworkObject.DOUBLE_TYPE) {
+			output.writeDouble(this.doubleValue);
+			
+		}
+		else if (this.type == NetworkObject.BOOLEAN_TYPE) {
+			output.writeBoolean(this.booleanValue);
+			
+		}
+		else if (this.type == NetworkObject.FLOAT_TYPE) {
+			output.writeFloat(this.floatValue);
+			
+		}
+		else if (this.type == NetworkObject.LONG_TYPE) {
+			output.writeLong(this.longValue);
+			
+		}
+		else if (this.type == NetworkObject.SHORT_TYPE) {
+			output.writeShort(this.shortValue);
+			
+		}
+		else if (this.type == NetworkObject.BYTE_TYPE) {
+			output.writeByte(this.byteValue);
+			
+		}
+		else if (this.type == NetworkObject.CHARACTER_TYPE) {
+			output.writeChar(this.charValue);
+			
+		}
+		else {
+			output.writeUTF(this.stringValue);
+		}
 	}
-
 	
 	public Class getType() {
-		return type;
+		return this.type;
 	}
-
+	
 	public void setType(Class type) {
 		this.type = type;
 	}
-
 	
 	public int getInt() {
-		if (type != INTEGER_TYPE) {
-			throw new RuntimeException("Attempt to get integer from " + type + " class");
+		if (this.type != NetworkObject.INTEGER_TYPE) {
+			throw new RuntimeException("Attempt to get integer from "
+			        + this.type + " class");
 		}
 		
-		return intValue;
+		return this.intValue;
 	}
-
+	
 	public void setInt(int intValue) {
-		if (type != INTEGER_TYPE) {
-			throw new RuntimeException("Attempt to set integer from " + type + " class");
+		if (this.type != NetworkObject.INTEGER_TYPE) {
+			throw new RuntimeException("Attempt to set integer from "
+			        + this.type + " class");
 		}
-
+		
 		this.intValue = intValue;
 	}
-
+	
 	public double getDouble() {
-		if (type != INTEGER_TYPE) {
-			throw new RuntimeException("Attempt to get double from " + type + " class");
+		if (this.type != NetworkObject.INTEGER_TYPE) {
+			throw new RuntimeException("Attempt to get double from "
+			        + this.type + " class");
 		}
 		
-		return doubleValue;
+		return this.doubleValue;
 	}
-
+	
 	public void setDouble(double doubleValue) {
-		if (type != DOUBLE_TYPE) {
-			throw new RuntimeException("Attempt to set double from " + type + " class");
+		if (this.type != NetworkObject.DOUBLE_TYPE) {
+			throw new RuntimeException("Attempt to set double from "
+			        + this.type + " class");
 		}
-
+		
 		this.doubleValue = doubleValue;
 	}
-
+	
 	public boolean getBoolean() {
-		if (type != BOOLEAN_TYPE) {
-			throw new RuntimeException("Attempt to get boolean from " + type + " class");
+		if (this.type != NetworkObject.BOOLEAN_TYPE) {
+			throw new RuntimeException("Attempt to get boolean from "
+			        + this.type + " class");
 		}
 		
-		return booleanValue;
+		return this.booleanValue;
 	}
-
+	
 	public void setBoolean(boolean booleanValue) {
-		if (type != BOOLEAN_TYPE) {
-			throw new RuntimeException("Attempt to set boolean from " + type + " class");
+		if (this.type != NetworkObject.BOOLEAN_TYPE) {
+			throw new RuntimeException("Attempt to set boolean from "
+			        + this.type + " class");
 		}
-
+		
 		this.booleanValue = booleanValue;
 	}
-
+	
 	public float getFloat() {
-		if (type != FLOAT_TYPE) {
-			throw new RuntimeException("Attempt to get float from " + type + " class");
+		if (this.type != NetworkObject.FLOAT_TYPE) {
+			throw new RuntimeException("Attempt to get float from " + this.type
+			        + " class");
 		}
 		
-		return floatValue;
+		return this.floatValue;
 	}
-
+	
 	public void setFloat(float floatValue) {
-		if (type != FLOAT_TYPE) {
-			throw new RuntimeException("Attempt to set float from " + type + " class");
+		if (this.type != NetworkObject.FLOAT_TYPE) {
+			throw new RuntimeException("Attempt to set float from " + this.type
+			        + " class");
 		}
-
+		
 		this.floatValue = floatValue;
 	}
 	
 	public long getLong() {
-		if (type != LONG_TYPE) {
-			throw new RuntimeException("Attempt to get long from " + type + " class");
+		if (this.type != NetworkObject.LONG_TYPE) {
+			throw new RuntimeException("Attempt to get long from " + this.type
+			        + " class");
 		}
 		
-		return longValue;
+		return this.longValue;
 	}
-
+	
 	public void setLong(long longValue) {
-		if (type != LONG_TYPE) {
-			throw new RuntimeException("Attempt to set long from " + type + " class");
+		if (this.type != NetworkObject.LONG_TYPE) {
+			throw new RuntimeException("Attempt to set long from " + this.type
+			        + " class");
 		}
-
+		
 		this.longValue = longValue;
 	}
-
+	
 	public short getShort() {
-		if (type != SHORT_TYPE) {
-			throw new RuntimeException("Attempt to get short from " + type + " class");
+		if (this.type != NetworkObject.SHORT_TYPE) {
+			throw new RuntimeException("Attempt to get short from " + this.type
+			        + " class");
 		}
 		
-		return shortValue;
+		return this.shortValue;
 	}
-
+	
 	public void setShort(short shortValue) {
-		if (type != SHORT_TYPE) {
-			throw new RuntimeException("Attempt to set short from " + type + " class");
+		if (this.type != NetworkObject.SHORT_TYPE) {
+			throw new RuntimeException("Attempt to set short from " + this.type
+			        + " class");
 		}
-
+		
 		this.shortValue = shortValue;
 	}
-
+	
 	public byte getByte() {
-		if (type != BYTE_TYPE) {
-			throw new RuntimeException("Attempt to get byte from " + type + " class");
+		if (this.type != NetworkObject.BYTE_TYPE) {
+			throw new RuntimeException("Attempt to get byte from " + this.type
+			        + " class");
 		}
 		
-		return byteValue;
+		return this.byteValue;
 	}
-
+	
 	public void setByte(byte byteValue) {
-		if (type != BYTE_TYPE) {
-			throw new RuntimeException("Attempt to set byte from " + type + " class");
+		if (this.type != NetworkObject.BYTE_TYPE) {
+			throw new RuntimeException("Attempt to set byte from " + this.type
+			        + " class");
 		}
-
+		
 		this.byteValue = byteValue;
 	}
-
+	
 	public char getChar() {
-		if (type != CHARACTER_TYPE) {
-			throw new RuntimeException("Attempt to get char from " + type + " class");
+		if (this.type != NetworkObject.CHARACTER_TYPE) {
+			throw new RuntimeException("Attempt to get char from " + this.type
+			        + " class");
 		}
 		
-		return charValue;
+		return this.charValue;
 	}
-
+	
 	public void setChar(char charValue) {
-		if (type != CHARACTER_TYPE) {
-			throw new RuntimeException("Attempt to set char from " + type + " class");
+		if (this.type != NetworkObject.CHARACTER_TYPE) {
+			throw new RuntimeException("Attempt to set char from " + this.type
+			        + " class");
 		}
-
+		
 		this.charValue = charValue;
 	}
-
+	
 	public String getString() {
-		if (type == null || type.isPrimitive()) {
-			throw new RuntimeException("Attempt to get String from " + type + " class");
+		if (this.type == null || this.type.isPrimitive()) {
+			throw new RuntimeException("Attempt to get String from "
+			        + this.type + " class");
 		}
 		
-		return stringValue;
+		return this.stringValue;
 	}
-
+	
 	public void setString(String stringValue) {
-		if (type == null || type.isPrimitive()) {
-			throw new RuntimeException("Attempt to set String from " + type + " class");
+		if (this.type == null || this.type.isPrimitive()) {
+			throw new RuntimeException("Attempt to set String from "
+			        + this.type + " class");
 		}
-
+		
 		this.stringValue = stringValue;
 	}
-
-
-	private static HashMap	map;
+	
+	private static HashMap map;
 	
 	/**
-	 * Set this <code>NetworkObject</code> packet description to describe what 
+	 * Set this <code>NetworkObject</code> packet description to describe what
 	 * this packet for when <code>NetworkConfig.DEBUG</code> is set to true.
 	 */
 	public NetworkPacket setDescription(String description) {
 		if (NetworkConfig.DEBUG) {
-			if (map == null) map = new HashMap();
-
-			map.put(new Short(this.getID()), description);
+			if (NetworkObject.map == null) {
+				NetworkObject.map = new HashMap();
+			}
+			
+			NetworkObject.map.put(new Short(this.getID()), description);
 		}
 		
 		return this;
 	}
 	
-	
 	public String toString() {
-		if (!NetworkConfig.DEBUG) return super.toString();
+		if (!NetworkConfig.DEBUG) {
+			return super.toString();
+		}
 		
 		StringBuffer buff = new StringBuffer();
 		
 		buff.append("NetworkObject ");
-		if (map != null) {
-			String description = (String) map.get(new Short(this.getID()));
+		if (NetworkObject.map != null) {
+			String description = (String) NetworkObject.map.get(new Short(this
+			        .getID()));
 			
-			if (description != null) buff.append(description).append(" ");
+			if (description != null) {
+				buff.append(description).append(" ");
+			}
 		}
-		if (isSendSender()) buff.append("Sender ID ").append(getSender()).append(" ");
-		buff.append("ID ").append(getID());
-		if (isSendCode()) buff.append(" (code=").append(getCode()).append(")");
+		if (this.isSendSender()) {
+			buff.append("Sender ID ").append(this.getSender()).append(" ");
+		}
+		buff.append("ID ").append(this.getID());
+		if (this.isSendCode()) {
+			buff.append(" (code=").append(this.getCode()).append(")");
+		}
 		buff.append(": ");
 		
-		if (type == null)					buff.append("send ID only");
-		else if (type == INTEGER_TYPE)		buff.append("int = "		+ intValue);
-		else if (type == DOUBLE_TYPE)		buff.append("double = "		+ doubleValue);
-		else if (type == BOOLEAN_TYPE)		buff.append("boolean = "	+ booleanValue);
-		else if (type == FLOAT_TYPE)		buff.append("float = "		+ floatValue);
-		else if (type == LONG_TYPE)			buff.append("long = "		+ longValue);
-		else if (type == SHORT_TYPE)		buff.append("short = "		+ shortValue);
-		else if (type == BYTE_TYPE)			buff.append("byte = "		+ byteValue);
-		else if (type == CHARACTER_TYPE)	buff.append("char = "		+ charValue);
-		else buff.append("String = " + stringValue);
+		if (this.type == null) {
+			buff.append("send ID only");
+		}
+		else if (this.type == NetworkObject.INTEGER_TYPE) {
+			buff.append("int = " + this.intValue);
+		}
+		else if (this.type == NetworkObject.DOUBLE_TYPE) {
+			buff.append("double = " + this.doubleValue);
+		}
+		else if (this.type == NetworkObject.BOOLEAN_TYPE) {
+			buff.append("boolean = " + this.booleanValue);
+		}
+		else if (this.type == NetworkObject.FLOAT_TYPE) {
+			buff.append("float = " + this.floatValue);
+		}
+		else if (this.type == NetworkObject.LONG_TYPE) {
+			buff.append("long = " + this.longValue);
+		}
+		else if (this.type == NetworkObject.SHORT_TYPE) {
+			buff.append("short = " + this.shortValue);
+		}
+		else if (this.type == NetworkObject.BYTE_TYPE) {
+			buff.append("byte = " + this.byteValue);
+		}
+		else if (this.type == NetworkObject.CHARACTER_TYPE) {
+			buff.append("char = " + this.charValue);
+		}
+		else {
+			buff.append("String = " + this.stringValue);
+		}
 		
 		return buff.toString();
 	}
-
-
+	
 }

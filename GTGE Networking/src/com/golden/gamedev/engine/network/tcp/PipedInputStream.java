@@ -21,82 +21,83 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- *
+ * 
  * @author Kevin
  */
 public class PipedInputStream extends InputStream {
 	
-	private int[]	data;
-	private int		write;
-	private int		read;
-	private int		available;
+	private int[] data;
+	private int write;
+	private int read;
+	private int available;
 	
-	public PipedInputStream(PipedOutputStream pout, int size) throws IOException {
-		data = new int[size];
+	public PipedInputStream(PipedOutputStream pout, int size)
+	        throws IOException {
+		this.data = new int[size];
 		pout.connect(this);
 	}
 	
-	
 	public synchronized int available() throws IOException {
-		return available;
+		return this.available;
 	}
-
+	
 	public void close() throws IOException {
 	}
-
+	
 	public synchronized int read() throws IOException {
-		if (available <= 0) {
+		if (this.available <= 0) {
 			return -1;
 		}
-		if (read == write) {
+		if (this.read == this.write) {
 			return -1;
 		}
 		
-		available--;
-		int value = data[read];
-		read++;
-		if (read >= data.length) {
-			read = 0;
+		this.available--;
+		int value = this.data[this.read];
+		this.read++;
+		if (this.read >= this.data.length) {
+			this.read = 0;
 		}
 		return value;
 	}
-
-	public synchronized int read(byte[] ret, int off, int len) throws IOException {
-		if (available <= 0) {
+	
+	public synchronized int read(byte[] ret, int off, int len)
+	        throws IOException {
+		if (this.available <= 0) {
 			return -1;
 		}
 		
 		int count = 0;
-		for (int i=off;i<off+len;i++) {
-			int b = read();
+		for (int i = off; i < off + len; i++) {
+			int b = this.read();
 			if (b == -1) {
 				break;
 			}
 			count++;
 			ret[i] = (byte) b;
 		}
-
+		
 		return count;
 	}
-
+	
 	protected synchronized void receive(int b) throws IOException {
 		if (b < 0) {
 			b = 256 + b;
 		}
-		data[write] = b;
-		write++;
-		if (write >= data.length) {
-			write = 0;
+		this.data[this.write] = b;
+		this.write++;
+		if (this.write >= this.data.length) {
+			this.write = 0;
 		}
-		if (write == read) {
+		if (this.write == this.read) {
 			throw new IOException("Buffer overflow in NewPipedInputStream");
 		}
 		
-		available++;
+		this.available++;
 	}
-
+	
 	public int read(byte[] b) throws IOException {
-		return read(b,0,b.length);
+		return this.read(b, 0, b.length);
 	}
-
+	
 }

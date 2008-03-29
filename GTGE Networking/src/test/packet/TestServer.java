@@ -33,7 +33,7 @@ import com.golden.gamedev.engine.network.packet.NetworkMessage;
 import com.golden.gamedev.engine.network.tcp.TCPServer;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class TestServer {
@@ -41,40 +41,40 @@ public class TestServer {
 	public static void main(String[] args) {
 		// the server port
 		int port = 1234;
-
 		
 		// we need to register our custom packet first
 		NetworkConfig.registerPacket((short) 1, AllFieldTypePacket.class);
 		NetworkConfig.DEBUG = true;
 		
-		
 		try {
-			BaseServer bsServer = new TCPServer(port);	// create the server
+			BaseServer bsServer = new TCPServer(port); // create the server
 			
 			System.out.println("Waiting for clients...");
-		
 			
 			// network loop
 			while (true) {
-				bsServer.update(100);	// the main work
+				bsServer.update(100); // the main work
 				
 				// iterate all received packets
 				BaseClient[] clients = bsServer.getReceivedPacketClients();
-				for (int i=0;i < clients.length;i++) {
+				for (int i = 0; i < clients.length; i++) {
 					NetworkPacket[] packets = clients[i].getReceivedPackets();
 					
 					// simply send back message OK
-					clients[i].sendPacket(new NetworkMessage("Server said OK."));
+					clients[i]
+					        .sendPacket(new NetworkMessage("Server said OK."));
 				}
-
+				
 				try {
 					Thread.sleep(100);
-				} catch (InterruptedException ex) {
+				}
+				catch (InterruptedException ex) {
 					ex.printStackTrace();
 				}
 			}
 			
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			System.err.println("IO Exception");
 			ex.printStackTrace();
 			System.exit(-1);

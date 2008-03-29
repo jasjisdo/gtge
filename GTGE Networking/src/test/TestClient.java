@@ -25,37 +25,37 @@ package test;
 // JFC
 import java.io.IOException;
 
-// GTGE NETWORKING
 import com.golden.gamedev.engine.network.NetworkPacket;
 import com.golden.gamedev.engine.network.packet.NetworkMessage;
 import com.golden.gamedev.engine.network.tcp.TCPClient;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class TestClient {
 	
-	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	public static void main(String[] args) {
 		// connect to server
 		TCPClient client = null;
 		
 		try {
-			client = new TCPClient("localhost", 11137);	// connect to localhost:11137
+			client = new TCPClient("localhost", 11137); // connect to
+														// localhost:11137
 			
-		} catch (IOException ex) {
+		}
+		catch (IOException ex) {
 			ex.printStackTrace();
-			System.err.println("Client initialization failed.\nCaused by:\n" + ex.getMessage());
+			System.err.println("Client initialization failed.\nCaused by:\n"
+			        + ex.getMessage());
 			System.exit(-1);
 		}
 		
 		System.out.println("Client Detail: " + client.getDetail());
-		
 		
 		// network loop
 		int i = 0;
@@ -64,49 +64,56 @@ public class TestClient {
 			try {
 				client.update(100);
 				
-			} catch (IOException ex) {
+			}
+			catch (IOException ex) {
 				ex.printStackTrace();
-				System.err.println("Client disconnected.\nCaused by:\n" + ex.getMessage());
+				System.err.println("Client disconnected.\nCaused by:\n"
+				        + ex.getMessage());
 				System.exit(-1);
 			}
 			
-			
 			// handle received messages
 			NetworkPacket[] packets = client.getReceivedPackets();
-			for (int j=0;j < packets.length;j++) {
+			for (int j = 0; j < packets.length; j++) {
 				NetworkMessage packet = (NetworkMessage) packets[j];
 				
-				System.out.println(client.getRemoteDetail() + ": " + packet.getMessage());
+				System.out.println(client.getRemoteDetail() + ": "
+				        + packet.getMessage());
 			}
-
 			
-			// send message 
+			// send message
 			// every 20 tick
 			if (i++ % 20 == 0 && i < 100) {
 				try {
 					System.out.println("sending packet to server");
-					client.sendPacket(new NetworkMessage("Client said Yes or No"));
+					client.sendPacket(new NetworkMessage(
+					        "Client said Yes or No"));
 					
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					ex.printStackTrace();
 				}
-	
-			// disconnect from server
-			// after 200 tick
-			} else if (i > 200) {
+				
+				// disconnect from server
+				// after 200 tick
+			}
+			else if (i > 200) {
 				try {
 					client.disconnect();
 					
-				} catch (IOException ex) {
+				}
+				catch (IOException ex) {
 					ex.printStackTrace();
 				}
 				
 				break; // out from network loop
 			}
 			
-			
-			try { Thread.sleep(100);
-			} catch (InterruptedException ex) { }
+			try {
+				Thread.sleep(100);
+			}
+			catch (InterruptedException ex) {
+			}
 		}
 	}
 }

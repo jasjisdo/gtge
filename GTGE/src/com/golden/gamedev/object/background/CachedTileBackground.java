@@ -22,66 +22,67 @@ import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 
 import com.golden.gamedev.engine.BaseGraphics;
-import com.golden.gamedev.object.background.TileBackground;
 
 public class CachedTileBackground extends TileBackground {
-
-	private VolatileImage cache;
-    private boolean validated;
-    private double oldX;
-    private double oldY;
-
+	
 	/**
-	 * Create a regular TileBackground using the bsGraphics
-	 * to generate a big managed image to cache the rending.
+	 * 
+	 */
+	private static final long serialVersionUID = -4682118408949172952L;
+	private VolatileImage cache;
+	private boolean validated;
+	private double oldX;
+	private double oldY;
+	
+	/**
+	 * Create a regular TileBackground using the bsGraphics to generate a big
+	 * managed image to cache the rending.
 	 */
 	public CachedTileBackground(BaseGraphics bsGraphics,
-							    BufferedImage images[],
-							    int tiles[][]) {
+	        BufferedImage images[], int tiles[][]) {
 		super(images, tiles);
 		
 		this.cache = bsGraphics.getComponent().createVolatileImage(
-			bsGraphics.getSize().width,
-			bsGraphics.getSize().height);
+		        bsGraphics.getSize().width, bsGraphics.getSize().height);
 	}
 	
 	/**
-	 * Check the background to see if it must be fully rendered.
-	 * (to see if the cache must be invalidate)
-	 *
-	 * The cache is valid if :
-	 * 1) It was already valid and
-	 * 2) The background did not move.
+	 * Check the background to see if it must be fully rendered. (to see if the
+	 * cache must be invalidate)
+	 * 
+	 * The cache is valid if : 1) It was already valid and 2) The background did
+	 * not move.
 	 */
 	protected void checkMutations() {
-		validated = validated && oldX == getX() && oldY == getY();
+		this.validated = this.validated && this.oldX == this.getX()
+		        && this.oldY == this.getY();
 	}
 	
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
 		
-		checkMutations();
+		this.checkMutations();
 	}
 	
 	/**
-	 * Render the background using the cache.  If the cache is not valid,
-	 * render the background to it to make it valid again.  The draw
-	 * the cache to the screen.
-	 *
+	 * Render the background using the cache. If the cache is not valid, render
+	 * the background to it to make it valid again. The draw the cache to the
+	 * screen.
+	 * 
 	 * @param g
 	 */
 	public void render(Graphics2D g) {
-		if (!validated) {
+		if (!this.validated) {
 			// render the background in a big managed image
-			super.render(cache.createGraphics());
+			super.render(this.cache.createGraphics());
 			
-			validated = true;
-			oldX = getX();
-			oldY = getY();
+			this.validated = true;
+			this.oldX = this.getX();
+			this.oldY = this.getY();
 		}
 		
 		// draw the big managed image to the screen
-		g.drawImage(cache, 0, 0, null);
+		g.drawImage(this.cache, 0, 0, null);
 	}
 	
 }

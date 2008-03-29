@@ -36,47 +36,46 @@ import com.golden.gamedev.engine.network.packet.NetworkPing;
 import com.golden.gamedev.engine.network.packet.NetworkRawPacket;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public abstract class BaseClient {
 	
-	private final NetworkPacket[] nullPacket		= new NetworkPacket[0];
-	private final NetworkPacket[] receivedPackets1	= new NetworkPacket[1];
-	private final NetworkPacket[] receivedPackets2	= new NetworkPacket[2];
+	private final NetworkPacket[] nullPacket = new NetworkPacket[0];
+	private final NetworkPacket[] receivedPackets1 = new NetworkPacket[1];
+	private final NetworkPacket[] receivedPackets2 = new NetworkPacket[2];
 	
 	/**
 	 * Default time out when waiting for packet is 10 secs.
 	 */
-	public static int defaultWaitTimeOut	= 10000;
-
+	public static int defaultWaitTimeOut = 10000;
+	
 	/**
 	 * Default update time when waiting for packet is 0.1 sec.
 	 */
-	public static int defaultUpdateTime		= 100;
+	public static int defaultUpdateTime = 100;
 	
-		
-	protected BaseServer	server;
-
-	private boolean			hasClientID		= false;
-	private short			clientID		= -1;
-	private String			groupName		= null;
-	private Object			info;
-
-	private NetworkPacket[]	receivedPackets	= nullPacket;
+	protected BaseServer server;
 	
-	protected long			lastPing		= System.currentTimeMillis();	// last time we ping the server/client
-	protected long			lastReceivedPing;								// last time we got ping
-
-	private int				pingTime		= NetworkConfig.getDefaultPingTime();
-	private List			listPackets		= new ArrayList();
+	private boolean hasClientID = false;
+	private short clientID = -1;
+	private String groupName = null;
+	private Object info;
 	
-	private boolean			connected		= true;
+	private NetworkPacket[] receivedPackets = this.nullPacket;
 	
+	protected long lastPing = System.currentTimeMillis(); // last time we ping
+															// the server/client
+	protected long lastReceivedPing; // last time we got ping
 	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	private int pingTime = NetworkConfig.getDefaultPingTime();
+	private List listPackets = new ArrayList();
+	
+	private boolean connected = true;
+	
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	/** Creates a new instance of BaseClient */
 	public BaseClient() {
@@ -88,134 +87,150 @@ public abstract class BaseClient {
 	protected BaseClient(BaseServer server) {
 		this.server = server;
 	}
-
 	
 	public void update(long elapsedTime) throws IOException {
-		clearConsumedPacket();
+		this.clearConsumedPacket();
 		
-		if (pingTime != -1) {
-			if (System.currentTimeMillis() - lastPing > pingTime) {
-				lastPing = System.currentTimeMillis();
-				ping();
+		if (this.pingTime != -1) {
+			if (System.currentTimeMillis() - this.lastPing > this.pingTime) {
+				this.lastPing = System.currentTimeMillis();
+				this.ping();
 			}
 		}
 	}
 	
-	
 	public void sendPacket(NetworkPacket packet) throws IOException {
-		if (server == null && packet.isSendSender()) {
+		if (this.server == null && packet.isSendSender()) {
 			packet.setSender(this);
 		}
-
+		
 		if (NetworkConfig.DEBUG && packet != NetworkPing.getInstance()) {
-			System.out.println("SEND packet to " + ((server == null) ? "Server": getCompleteDetail()));
+			System.out.println("SEND packet to "
+			        + ((this.server == null) ? "Server" : this
+			                .getCompleteDetail()));
 			System.out.println(packet);
 			System.out.println();
 		}
-		
 		
 		PacketManager packetManager = NetworkConfig.getPacketManager();
 		
 		byte[] data = packetManager.pack(packet);
 		
-		sendPacket(data);
-
+		this.sendPacket(data);
 		
 		// check for packet compression, uncomment these lines
-//		if (packet != NetworkPing.getInstance()) {
-//			String name = packet.getClass().getName();
-//			if (name.lastIndexOf(".") != -1) name = name.substring(name.lastIndexOf(".") + 1);
-//			
-//			String packetID = (packet.getID() != NetworkPacket.NULL_ID) ? String.valueOf(packet.getID()) + " " : "";
-//			
-//			System.out.println(name + " " + packetID + "Compressed: " + packet.isCompressed() + " = " + data.length + " (sent)");
-//			packet.setCompressed(!packet.isCompressed());
-//			System.out.println(name + " " + packetID + "Compressed: " + packet.isCompressed() + " = " + packetManager.pack(packet).length);
-//			System.out.println();
-//		}
+		// if (packet != NetworkPing.getInstance()) {
+		// String name = packet.getClass().getName();
+		// if (name.lastIndexOf(".") != -1) name =
+		// name.substring(name.lastIndexOf(".") + 1);
+		//			
+		// String packetID = (packet.getID() != NetworkPacket.NULL_ID) ?
+		// String.valueOf(packet.getID()) + " " : "";
+		//			
+		// System.out.println(name + " " + packetID + "Compressed: " +
+		// packet.isCompressed() + " = " + data.length + " (sent)");
+		// packet.setCompressed(!packet.isCompressed());
+		// System.out.println(name + " " + packetID + "Compressed: " +
+		// packet.isCompressed() + " = " + packetManager.pack(packet).length);
+		// System.out.println();
+		// }
 	}
 	
 	public void sendRawPacket(byte[] data) throws IOException {
 		if (NetworkConfig.getPacketManager() != null) {
 			throw new RuntimeException(
-				"The PacketManager is exists.\n" +
-				"Configure NetworkConfiguration.setPacketManager(null) to send a raw packet.");
+			        "The PacketManager is exists.\n"
+			                + "Configure NetworkConfiguration.setPacketManager(null) to send a raw packet.");
 		}
 		
-		sendPacket(data);
+		this.sendPacket(data);
 	}
 	
 	public void ping() throws IOException {
 		if (NetworkConfig.getPacketManager() == null) {
-			sendPacket(NetworkPing.ping);
-
-		} else {
-			sendPacket(NetworkPing.getInstance());
+			this.sendPacket(NetworkPing.ping);
+			
+		}
+		else {
+			this.sendPacket(NetworkPing.getInstance());
 		}
 	}
 	
 	protected abstract void sendPacket(byte[] data) throws IOException;
 	
-	
 	protected abstract void disconnectImpl() throws IOException;
 	
 	public void disconnect() throws IOException {
 		// remove from the server first
-		if (connected) {
-			connected = false;
+		if (this.connected) {
+			this.connected = false;
 			
-			if (server != null) {
-				server.removeClient(this);
+			if (this.server != null) {
+				this.server.removeClient(this);
 			}
 		}
 		
-		disconnectImpl();
+		this.disconnectImpl();
 	}
 	
 	public void silentDisconnect() {
-		try { disconnect(); } catch (IOException ex) { }
+		try {
+			this.disconnect();
+		}
+		catch (IOException ex) {
+		}
 	}
-	
 	
 	public abstract boolean isConnected();
 	
-	
-	public NetworkPacket waitForPacket(boolean update, long updateTime, int waitTimeOut) throws NetworkException, IOException {
+	public NetworkPacket waitForPacket(boolean update, long updateTime, int waitTimeOut)
+	        throws NetworkException, IOException {
 		long startTime = System.currentTimeMillis();
 		
 		while (true) {
-			if (update) update(updateTime);
+			if (update) {
+				this.update(updateTime);
+			}
 			
-			if (receivedPackets.length > 0) {
+			if (this.receivedPackets.length > 0) {
 				// packet arrived!
-				return receivedPackets[0];
+				return this.receivedPackets[0];
 			}
 			
 			if (waitTimeOut != -1) {
 				if (System.currentTimeMillis() - startTime > waitTimeOut) {
 					// time out reached
-					throw new NetworkException("Packet time out " + waitTimeOut + "ms");
+					throw new NetworkException("Packet time out " + waitTimeOut
+					        + "ms");
 				}
 			}
 			
-			try { Thread.sleep(updateTime);
-			} catch (InterruptedException ex) { }
+			try {
+				Thread.sleep(updateTime);
+			}
+			catch (InterruptedException ex) {
+			}
 		}
 	}
 	
-	public NetworkPacket waitForPacket(boolean update) throws NetworkException, IOException {
+	public NetworkPacket waitForPacket(boolean update) throws NetworkException,
+	        IOException {
 		// retrieve packet every 0.1 sec
 		// time out 20 secs
-		return waitForPacket(update, defaultUpdateTime, defaultWaitTimeOut); 
+		return this.waitForPacket(update, BaseClient.defaultUpdateTime,
+		        BaseClient.defaultWaitTimeOut);
 	}
-
-	public NetworkPacket waitForPacket(boolean update, short id, long updateTime, int waitTimeOut) throws NetworkException, IOException {
+	
+	public NetworkPacket waitForPacket(boolean update, short id, long updateTime, int waitTimeOut)
+	        throws NetworkException, IOException {
 		long startTime = System.currentTimeMillis();
 		
 		while (true) {
-			if (update) update(updateTime);
+			if (update) {
+				this.update(updateTime);
+			}
 			
-			NetworkPacket packet = getReceivedPacket(id);
+			NetworkPacket packet = this.getReceivedPacket(id);
 			if (packet != null) {
 				// packet arrived!
 				return packet;
@@ -224,32 +239,42 @@ public abstract class BaseClient {
 			if (waitTimeOut != -1) {
 				if (System.currentTimeMillis() - startTime > waitTimeOut) {
 					// time out reached
-					throw new NetworkException("Packet time out " + waitTimeOut + "ms");
+					throw new NetworkException("Packet time out " + waitTimeOut
+					        + "ms");
 				}
 			}
 			
-			try { Thread.sleep(updateTime);
-			} catch (InterruptedException ex) { }
+			try {
+				Thread.sleep(updateTime);
+			}
+			catch (InterruptedException ex) {
+			}
 		}
 	}
 	
-	public NetworkPacket waitForPacket(boolean update, short id) throws NetworkException, IOException {
+	public NetworkPacket waitForPacket(boolean update, short id)
+	        throws NetworkException, IOException {
 		// retrieve packet every 0.1 sec
 		// time out 20 secs
-		return waitForPacket(update, id, defaultUpdateTime, defaultWaitTimeOut); 
+		return this.waitForPacket(update, id, BaseClient.defaultUpdateTime,
+		        BaseClient.defaultWaitTimeOut);
 	}
-
-	public NetworkPacket waitForPacketCode(boolean update, short code, long updateTime, int waitTimeOut) throws NetworkException, IOException {
+	
+	public NetworkPacket waitForPacketCode(boolean update, short code, long updateTime, int waitTimeOut)
+	        throws NetworkException, IOException {
 		long startTime = System.currentTimeMillis();
 		
 		while (true) {
-			if (update) update(updateTime);
+			if (update) {
+				this.update(updateTime);
+			}
 			
-			NetworkPacket packet = getReceivedPacketCode(code);
+			NetworkPacket packet = this.getReceivedPacketCode(code);
 			if (packet != null) {
 				// packet arrived!
-				packet.consume();	// since this unique packet, the packet must be the right packet
-									// we simply consume it, to make everything much more easy
+				packet.consume(); // since this unique packet, the packet must
+									// be the right packet
+				// we simply consume it, to make everything much more easy
 				
 				return packet;
 			}
@@ -257,34 +282,40 @@ public abstract class BaseClient {
 			if (waitTimeOut != -1) {
 				if (System.currentTimeMillis() - startTime > waitTimeOut) {
 					// time out reached
-					throw new NetworkException("Packet time out " + waitTimeOut + "ms");
+					throw new NetworkException("Packet time out " + waitTimeOut
+					        + "ms");
 				}
 			}
 			
-			try { Thread.sleep(updateTime);
-			} catch (InterruptedException ex) { }
+			try {
+				Thread.sleep(updateTime);
+			}
+			catch (InterruptedException ex) {
+			}
 		}
 	}
 	
-	public NetworkPacket waitForPacketCode(boolean update, short code) throws NetworkException, IOException {
+	public NetworkPacket waitForPacketCode(boolean update, short code)
+	        throws NetworkException, IOException {
 		// retrieve packet every 0.1 sec
 		// time out 20 secs
-		return waitForPacketCode(update, code, defaultUpdateTime, defaultWaitTimeOut); 
+		return this.waitForPacketCode(update, code,
+		        BaseClient.defaultUpdateTime, BaseClient.defaultWaitTimeOut);
 	}
 	
-	
 	public boolean isReceivedPacket() {
-		return (receivedPackets.length > 0);
+		return (this.receivedPackets.length > 0);
 	}
 	
 	public NetworkPacket getReceivedPacket() {
-		return (receivedPackets.length > 0) ? receivedPackets[0] : null;
+		return (this.receivedPackets.length > 0) ? this.receivedPackets[0]
+		        : null;
 	}
 	
 	public NetworkPacket getReceivedPacket(short id) {
-		for (int i=0;i < receivedPackets.length;i++) {
-			if (receivedPackets[i].getID() == id) {
-				return receivedPackets[i];
+		for (int i = 0; i < this.receivedPackets.length; i++) {
+			if (this.receivedPackets[i].getID() == id) {
+				return this.receivedPackets[i];
 			}
 		}
 		
@@ -292,10 +323,10 @@ public abstract class BaseClient {
 	}
 	
 	public NetworkPacket getReceivedPacketCode(short code) {
-		for (int i=0;i < receivedPackets.length;i++) {
-			if (receivedPackets[i].isSendCode() &&
-				receivedPackets[i].getCode() == code) {
-				return receivedPackets[i];
+		for (int i = 0; i < this.receivedPackets.length; i++) {
+			if (this.receivedPackets[i].isSendCode()
+			        && this.receivedPackets[i].getCode() == code) {
+				return this.receivedPackets[i];
 			}
 		}
 		
@@ -303,12 +334,12 @@ public abstract class BaseClient {
 	}
 	
 	public NetworkPacket[] getReceivedPackets() {
-		return receivedPackets;
+		return this.receivedPackets;
 	}
-
+	
 	protected void addReceivedPacket(byte[] data) throws IOException {
-		if (!hasClientID) {
-			setClientID(Short.parseShort(new String(data)));
+		if (!this.hasClientID) {
+			this.setClientID(Short.parseShort(new String(data)));
 			return;
 		}
 		
@@ -317,165 +348,180 @@ public abstract class BaseClient {
 		NetworkPacket packet = null;
 		if (manager != null) {
 			// we unpack the data using packet manager
-			packet = manager.unpack(data); 
+			packet = manager.unpack(data);
 			
-		} else {
+		}
+		else {
 			// we wrap it inside raw packet
 			if (data.length == 0) {
 				packet = NetworkPing.getInstance();
 				
-			} else {
+			}
+			else {
 				packet = new NetworkRawPacket(data);
 			}
 			
 		}
-
+		
 		if (NetworkConfig.DEBUG && packet != NetworkPing.getInstance()) {
-			System.out.println("RECEIVED packet from " + ((server == null) ? "Server" : getCompleteDetail()));
+			System.out.println("RECEIVED packet from "
+			        + ((this.server == null) ? "Server" : this
+			                .getCompleteDetail()));
 			System.out.println(packet);
 			System.out.println();
 		}
 		
-		
-		lastReceivedPing = System.currentTimeMillis();
+		this.lastReceivedPing = System.currentTimeMillis();
 		
 		if (packet == NetworkPing.getInstance()) {
 			// only a ping
-			if (server != null) {
+			if (this.server != null) {
 				// if this is server, we need to ping back
-				ping();	
+				this.ping();
 			}
 			
-			return; 
+			return;
 		}
 		
-		
-		if (receivedPackets == nullPacket) {
-			receivedPackets		= receivedPackets1;
-			receivedPackets[0]	= packet;
+		if (this.receivedPackets == this.nullPacket) {
+			this.receivedPackets = this.receivedPackets1;
+			this.receivedPackets[0] = packet;
 			
-		} else if (receivedPackets == receivedPackets1) {
-			receivedPackets		= receivedPackets2;
-			receivedPackets[0]	= receivedPackets1[0];
-			receivedPackets[1]	= packet;
+		}
+		else if (this.receivedPackets == this.receivedPackets1) {
+			this.receivedPackets = this.receivedPackets2;
+			this.receivedPackets[0] = this.receivedPackets1[0];
+			this.receivedPackets[1] = packet;
 			
-		} else {
-			receivedPackets = (NetworkPacket[]) NetworkUtil.expand(receivedPackets, 1);
-			receivedPackets[receivedPackets.length-1] = packet;
+		}
+		else {
+			this.receivedPackets = (NetworkPacket[]) NetworkUtil.expand(
+			        this.receivedPackets, 1);
+			this.receivedPackets[this.receivedPackets.length - 1] = packet;
 		}
 		
-		if (server != null) {
+		if (this.server != null) {
 			// client on server
-			server.addReceivedPacketClient(this);
+			this.server.addReceivedPacketClient(this);
 		}
 	}
 	
 	protected void clearConsumedPacket() {
-		if (receivedPackets.length > 0) {
-			for (int i=0;i < receivedPackets.length;i++) {
-				if (!receivedPackets[i].isConsumed() &&
-					!receivedPackets[i].isExpired()) {
-					// packet not consumed and 
+		if (this.receivedPackets.length > 0) {
+			for (int i = 0; i < this.receivedPackets.length; i++) {
+				if (!this.receivedPackets[i].isConsumed()
+				        && !this.receivedPackets[i].isExpired()) {
+					// packet not consumed and
 					// still not expired will be still available for use later
-					listPackets.add(receivedPackets[i]);
+					this.listPackets.add(this.receivedPackets[i]);
 				}
 			}
 			
-			if (listPackets.size() == 0) {
-				receivedPackets = nullPacket;
+			if (this.listPackets.size() == 0) {
+				this.receivedPackets = this.nullPacket;
 				
-			} else {
-				if (listPackets.size() == 1) {
-					receivedPackets = (NetworkPacket[]) listPackets.toArray(receivedPackets1);
+			}
+			else {
+				if (this.listPackets.size() == 1) {
+					this.receivedPackets = (NetworkPacket[]) this.listPackets
+					        .toArray(this.receivedPackets1);
 					
-				} else if (listPackets.size() == 2) {
-					receivedPackets = (NetworkPacket[]) listPackets.toArray(receivedPackets2);
+				}
+				else if (this.listPackets.size() == 2) {
+					this.receivedPackets = (NetworkPacket[]) this.listPackets
+					        .toArray(this.receivedPackets2);
 					
-				} else {
-					receivedPackets = (NetworkPacket[]) listPackets.toArray(nullPacket);
+				}
+				else {
+					this.receivedPackets = (NetworkPacket[]) this.listPackets
+					        .toArray(this.nullPacket);
 				}
 				
 				if (NetworkConfig.DEBUG) {
-					System.out.println("Not consumed packet = " + receivedPackets.length);
-					if (server != null) System.out.println("On client " + getCompleteDetail());
-					for (int i=0;i < receivedPackets.length;i++) {
-						System.out.println("Not consumed #" + (i+1) + " " + receivedPackets[i]);
+					System.out.println("Not consumed packet = "
+					        + this.receivedPackets.length);
+					if (this.server != null) {
+						System.out.println("On client "
+						        + this.getCompleteDetail());
+					}
+					for (int i = 0; i < this.receivedPackets.length; i++) {
+						System.out.println("Not consumed #" + (i + 1) + " "
+						        + this.receivedPackets[i]);
 					}
 					System.out.println();
 				}
 				
-				listPackets.clear();
+				this.listPackets.clear();
 			}
 		}
 	}
-
+	
 	public void clearReceivedPacket() {
-		receivedPackets = nullPacket;
+		this.receivedPackets = this.nullPacket;
 	}
 	
+	/** ************************************************************************* */
+	/** **************************** BEANS METHODS ****************************** */
+	/** ************************************************************************* */
 	
- /****************************************************************************/
- /****************************** BEANS METHODS *******************************/
- /****************************************************************************/
-
 	public int getPingTime() {
-		return pingTime;
+		return this.pingTime;
 	}
-
+	
 	public void setPingTime(int pingTime) {
 		this.pingTime = pingTime;
 	}
-
-
+	
 	public short getClientID() {
-		return clientID;
+		return this.clientID;
 	}
-
+	
 	public void setClientID(short clientID) {
-		this.clientID		= clientID;
-		this.hasClientID	= true;
-
+		this.clientID = clientID;
+		this.hasClientID = true;
+		
 		if (NetworkConfig.DEBUG) {
 			System.out.println("========================");
 			System.out.println("CONNECTED CLIENT ID: " + clientID);
 			System.out.println("========================");
-		}		
+		}
 	}
-
 	
 	public Object getInfo() {
-		return info;
+		return this.info;
 	}
-
+	
 	public void setInfo(Object info) {
 		this.info = info;
 	}
 	
-	
 	public boolean isGroupName(String groupName) {
-		if (this.groupName == groupName) return true;
-		if (this.groupName == null || groupName == null) return false;
+		if (this.groupName == groupName) {
+			return true;
+		}
+		if (this.groupName == null || groupName == null) {
+			return false;
+		}
 		
 		return this.groupName.equals(groupName);
 	}
 	
 	public String getGroupName() {
-		return groupName;
+		return this.groupName;
 	}
-
+	
 	public void setGroupName(String groupName) {
-		if (server != null) {
-			server.changeGroup(this, this.groupName, groupName);
+		if (this.server != null) {
+			this.server.changeGroup(this, this.groupName, groupName);
 		}
-
-		this.groupName = groupName;		
+		
+		this.groupName = groupName;
 	}
 	
 	void clearGroupName() {
 		// set no group
-		groupName = null;
+		this.groupName = null;
 	}
-
 	
 	public abstract String getDetail();
 	
@@ -486,9 +532,10 @@ public abstract class BaseClient {
 		
 		// id
 		buff.append("Client ID ");
-		if (hasClientID) {
-			buff.append(clientID);
-		} else {
+		if (this.hasClientID) {
+			buff.append(this.clientID);
+		}
+		else {
 			buff.append("[no-id]");
 		}
 		buff.append(" ");
@@ -496,30 +543,30 @@ public abstract class BaseClient {
 		buff.append("[");
 		
 		// group
-		if (server != null) {
-			String groupName = getGroupName();
-			if (groupName == null) groupName = "[no-group]";
+		if (this.server != null) {
+			String groupName = this.getGroupName();
+			if (groupName == null) {
+				groupName = "[no-group]";
+			}
 			
 			buff.append("group=").append(groupName).append("; ");
 		}
 		
 		// ip detail
 		buff.append(this.getRemoteDetail());
-				
+		
 		// info
-		if (getInfo() != null) {
+		if (this.getInfo() != null) {
 			buff.append("; info=").append(this.getInfo());
 		}
 		
 		buff.append("]");
 		
-		
 		return buff.toString();
 	}
-
 	
 	public long getLastReceivedPing() {
-		return lastReceivedPing;
+		return this.lastReceivedPing;
 	}
-
+	
 }

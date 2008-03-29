@@ -22,187 +22,190 @@
 
 package com.golden.gamedev.engine.network.tcp;
 
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Iterator;
 
-// GTGE
 import com.golden.gamedev.engine.BaseClient;
-import java.io.DataInputStream;
-import java.nio.ByteOrder;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class TCPClient extends BaseClient {
 	
-	private static final int		BUFFER_SIZE = 10240;
-
-	private SocketChannel			client;
-	private Selector				packetReader;
+	private static final int BUFFER_SIZE = 10240;
 	
-	private ByteBuffer				readBuffer;
-	private ByteBuffer				writeBuffer;
-
+	private SocketChannel client;
+	private Selector packetReader;
+	
+	private ByteBuffer readBuffer;
+	private ByteBuffer writeBuffer;
+	
 	// packet stream reader
-	private DataInputStream			input;
-	private PipedOutputStream	storage;
-	private boolean					waitingForLength = true;
-	private int						length;	
-
+	private DataInputStream input;
+	private PipedOutputStream storage;
+	private boolean waitingForLength = true;
+	private int length;
 	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	/** Creates a new instance of TCPClient */
 	public TCPClient(String host, int port) throws IOException {
 		this(new InetSocketAddress(host, port));
 	}
-
+	
 	public TCPClient(SocketAddress host) throws IOException {
-		this.client				= SocketChannel.open();
-		this.packetReader		= Selector.open();
-
-		client.connect(host);
+		this.client = SocketChannel.open();
+		this.packetReader = Selector.open();
 		
-		init();
+		this.client.connect(host);
+		
+		this.init();
 	}
 	
-	protected TCPClient(TCPServer server, SocketChannel client, Selector packetReader) throws IOException {
+	protected TCPClient(TCPServer server, SocketChannel client,
+	        Selector packetReader) throws IOException {
 		super(server);
 		
-		this.client			= client;
-		this.packetReader	= packetReader;
+		this.client = client;
+		this.packetReader = packetReader;
 		
-		init();
+		this.init();
 	}
 	
 	private void init() throws IOException {
-		storage		= new PipedOutputStream();
-		input		= new DataInputStream(new PipedInputStream(storage, BUFFER_SIZE*5));
-
+		this.storage = new PipedOutputStream();
+		this.input = new DataInputStream(new PipedInputStream(this.storage,
+		        TCPClient.BUFFER_SIZE * 5));
+		
 		// allocate unpack/write network packet buffer
-		readBuffer	= ByteBuffer.allocate(BUFFER_SIZE);
-		writeBuffer = ByteBuffer.allocate(BUFFER_SIZE);
+		this.readBuffer = ByteBuffer.allocate(TCPClient.BUFFER_SIZE);
+		this.writeBuffer = ByteBuffer.allocate(TCPClient.BUFFER_SIZE);
 		
-		readBuffer.order(ByteOrder.BIG_ENDIAN);
-		writeBuffer.order(ByteOrder.BIG_ENDIAN);
+		this.readBuffer.order(ByteOrder.BIG_ENDIAN);
+		this.writeBuffer.order(ByteOrder.BIG_ENDIAN);
 		
-		client.configureBlocking(false);
-		client.socket().setTcpNoDelay(true);
+		this.client.configureBlocking(false);
+		this.client.socket().setTcpNoDelay(true);
 		
 		// register packet reader
-		// if this client is client on server then packetReader 
+		// if this client is client on server then packetReader
 		// is grabbed from the server and shared among all other clients
 		// (one packetReader used by all clients)
-		client.register(packetReader, SelectionKey.OP_READ, this);
+		this.client.register(this.packetReader, SelectionKey.OP_READ, this);
 	}
-	
 	
 	// this is used only if this is a real client
 	// client on server is managed by the server itself
 	public void update(long elapsedTime) throws IOException {
 		super.update(elapsedTime);
 		
-		if (packetReader.selectNow() > 0) {
+		if (this.packetReader.selectNow() > 0) {
 			// packet received
-			Iterator packetIterator = packetReader.selectedKeys().iterator();
+			Iterator packetIterator = this.packetReader.selectedKeys()
+			        .iterator();
 			
 			while (packetIterator.hasNext()) {
 				SelectionKey key = (SelectionKey) packetIterator.next();
 				packetIterator.remove();
 				
-				read();
+				this.read();
 			}
 		}
 	}
 	
 	protected synchronized void read() throws IOException {
-		readBuffer.clear();							// clear previous buffer
+		this.readBuffer.clear(); // clear previous buffer
 		
-		int bytesRead = client.read(readBuffer);	// unpack into unpack buffer
+		int bytesRead = this.client.read(this.readBuffer); // unpack into
+															// unpack buffer
 		if (bytesRead < 0) {
 			throw new IOException("Reached end of stream");
 			
-		} else if (bytesRead == 0) {
+		}
+		else if (bytesRead == 0) {
 			return;
 		}
-
-
-		// write to storage (DataInputStream input field storage)
-		storage.write(readBuffer.array(), 0, bytesRead);
 		
+		// write to storage (DataInputStream input field storage)
+		this.storage.write(this.readBuffer.array(), 0, bytesRead);
 		
 		// unpack the packet
-		while (input.available() > 0) { 
+		while (this.input.available() > 0) {
 			// unpack the byte length first
-			if (waitingForLength) {
-				if (input.available() > 2) {
-					length				= input.readShort();
-					waitingForLength	= false;
+			if (this.waitingForLength) {
+				if (this.input.available() > 2) {
+					this.length = this.input.readShort();
+					this.waitingForLength = false;
 					
-				} else {
+				}
+				else {
 					// the length has not fully read
 					break;
 				}
 				
-			// then construct the packet
-			} else {
-				if (input.available() >= length) {
+				// then construct the packet
+			}
+			else {
+				if (this.input.available() >= this.length) {
 					// store the content to data
-					byte[] data = new byte[length];
-					input.readFully(data); 
-			
+					byte[] data = new byte[this.length];
+					this.input.readFully(data);
+					
 					// add to received packet
-					addReceivedPacket(data);
+					this.addReceivedPacket(data);
 					
-					waitingForLength = true;
+					this.waitingForLength = true;
 					
-				} else {
+				}
+				else {
 					// the content has not fully read
 					break;
 				}
 			}
 		}
 	}
-
-	protected synchronized void sendPacket(byte[] data) throws IOException {
-		writeBuffer.clear();						// clear previous data
-		
-		writeBuffer.putShort((short) data.length);	// send the byte length first
-		writeBuffer.put(data);						// and then send the data
-		
-		writeBuffer.rewind();
-		writeBuffer.limit(data.length + 2);			// limit the byte to data size plus 2 (data length)
-		
-		client.write(writeBuffer);					// send to network
-
-		writeBuffer.limit(2048);					// refresh the limit
-	}
 	
+	protected synchronized void sendPacket(byte[] data) throws IOException {
+		this.writeBuffer.clear(); // clear previous data
+		
+		this.writeBuffer.putShort((short) data.length); // send the byte length
+														// first
+		this.writeBuffer.put(data); // and then send the data
+		
+		this.writeBuffer.rewind();
+		this.writeBuffer.limit(data.length + 2); // limit the byte to data
+													// size plus 2 (data length)
+		
+		this.client.write(this.writeBuffer); // send to network
+		
+		this.writeBuffer.limit(2048); // refresh the limit
+	}
 	
 	protected void disconnectImpl() throws IOException {
-		client.close();
-	}
-
-	public boolean isConnected() {
-		return client.isConnected();
+		this.client.close();
 	}
 	
+	public boolean isConnected() {
+		return this.client.isConnected();
+	}
 	
 	public String getDetail() {
-		return String.valueOf(client.socket().getLocalSocketAddress());
+		return String.valueOf(this.client.socket().getLocalSocketAddress());
 	}
-
+	
 	public String getRemoteDetail() {
-		return client.socket().getRemoteSocketAddress().toString();
+		return this.client.socket().getRemoteSocketAddress().toString();
 	}
 	
 }

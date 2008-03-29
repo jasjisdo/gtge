@@ -16,52 +16,59 @@
  */
 package com.golden.gamedev.gui.theme.basic;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 
 import com.golden.gamedev.gui.TFloatPanel;
-import com.golden.gamedev.gui.toolkit.*;
+import com.golden.gamedev.gui.toolkit.GraphicsUtil;
+import com.golden.gamedev.gui.toolkit.TComponent;
 
 public class BTitleBarButtonRenderer extends BButtonRenderer {
-
+	
 	public BTitleBarButtonRenderer() {
-		put("Background Color", new Color(204, 204, 255));
-		put("Background Border Color", new Color(102, 102, 153));
-
-		put("Icon Close Image", GraphicsUtil.loadImage(getClass(), "icons/close.png", Transparency.BITMASK));
-		put("Icon Minimize Image", GraphicsUtil.loadImage(getClass(), "icons/minimize.png", Transparency.BITMASK));
-		put("Icon Restore Image", GraphicsUtil.loadImage(getClass(), "icons/restore.png", Transparency.BITMASK));
+		this.put("Background Color", new Color(204, 204, 255));
+		this.put("Background Border Color", new Color(102, 102, 153));
+		
+		this.put("Icon Close Image", GraphicsUtil.loadImage(this.getClass(),
+		        "icons/close.png", Transparency.BITMASK));
+		this.put("Icon Minimize Image", GraphicsUtil.loadImage(this.getClass(),
+		        "icons/minimize.png", Transparency.BITMASK));
+		this.put("Icon Restore Image", GraphicsUtil.loadImage(this.getClass(),
+		        "icons/restore.png", Transparency.BITMASK));
 	}
-
-	public String UIName() { return "TitleBarButton"; }
-
+	
+	public String UIName() {
+		return "TitleBarButton";
+	}
+	
 	public void processUI(TComponent component, BufferedImage[] ui) {
-		TFloatPanel.TTitleBar.TTitleBarButton button =
-			(TFloatPanel.TTitleBar.TTitleBarButton) component;
-
-		for (int i=0;i < ui.length;i++) {
+		TFloatPanel.TTitleBar.TTitleBarButton button = (TFloatPanel.TTitleBar.TTitleBarButton) component;
+		
+		for (int i = 0; i < ui.length; i++) {
 			Graphics2D g = ui[i].createGraphics();
-			int w = ui[i].getWidth(),
-				h = ui[i].getHeight();
-
+			int w = ui[i].getWidth(), h = ui[i].getHeight();
+			
 			BufferedImage img;
 			switch (button.getAction()) {
 				case TFloatPanel.TTitleBar.TTitleBarButton.CLOSE_BUTTON:
-					img = (BufferedImage) get("Icon Close Image", component);
-					g.drawImage(img,
-								((w-img.getWidth())/2)+1,
-								((h-img.getHeight())/2)+1, null);
-				break;
+					img = (BufferedImage) this.get("Icon Close Image",
+					        component);
+					g.drawImage(img, ((w - img.getWidth()) / 2) + 1, ((h - img
+					        .getHeight()) / 2) + 1, null);
+					break;
 				case TFloatPanel.TTitleBar.TTitleBarButton.ICONIFIED_BUTTON:
-					TFloatPanel pane = (TFloatPanel) button.getContainer().getContainer();
-					img = (BufferedImage) get((pane.isIcon() == true) ? "Icon Restore Image" : "Icon Minimize Image",
-											  component);
-					g.drawImage(img,
-								((w-img.getWidth())/2)+1,
-								((h-img.getHeight())/2)+1, null);
-				break;
+					TFloatPanel pane = (TFloatPanel) button.getContainer()
+					        .getContainer();
+					img = (BufferedImage) this.get(
+					        (pane.isIcon() == true) ? "Icon Restore Image"
+					                : "Icon Minimize Image", component);
+					g.drawImage(img, ((w - img.getWidth()) / 2) + 1, ((h - img
+					        .getHeight()) / 2) + 1, null);
+					break;
 			}
 		}
 	}
-
+	
 }

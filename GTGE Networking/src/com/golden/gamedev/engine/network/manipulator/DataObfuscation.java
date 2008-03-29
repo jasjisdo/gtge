@@ -25,40 +25,38 @@ package com.golden.gamedev.engine.network.manipulator;
 import com.golden.gamedev.engine.network.DataManipulator;
 
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public class DataObfuscation implements DataManipulator {
 	
-	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	/**
 	 * Creates a new instance of DataObfuscation
 	 */
 	public DataObfuscation() {
 	}
-
 	
 	public byte[] manipulate(byte[] data) throws Exception {
 		// reverse byte array
 		byte tmp;
 		int half = data.length / 2;
-
-		for (int i=0;i < half;i++) {
+		
+		for (int i = 0; i < half; i++) {
 			tmp = data[i];
 			
-			data[i]					= data[data.length-i-1];
-			data[data.length-i-1]	= tmp;
+			data[i] = data[data.length - i - 1];
+			data[data.length - i - 1] = tmp;
 		}
 		
 		return data;
 	}
-
+	
 	public byte[] demanipulate(byte[] data) throws Exception {
-		return manipulate(data);
+		return this.manipulate(data);
 	}
 	
 }

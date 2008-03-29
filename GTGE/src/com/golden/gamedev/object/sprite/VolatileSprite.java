@@ -19,38 +19,40 @@ package com.golden.gamedev.object.sprite;
 // JFC
 import java.awt.image.BufferedImage;
 
-
 /**
- * One time animation sprite, the sprite is animated once, and then
- * disappeared, suitable for explosion type sprite.
+ * One time animation sprite, the sprite is animated once, and then disappeared,
+ * suitable for explosion type sprite.
  */
 public class VolatileSprite extends AdvanceSprite {
-
-
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3599186946035433218L;
+	
 	/**
 	 * Creates new <code>VolatileSprite</code>.
 	 */
 	public VolatileSprite(BufferedImage[] image, double x, double y) {
-		super(image,x,y);
-
-		setAnimate(true);
+		super(image, x, y);
+		
+		this.setAnimate(true);
 	}
-
-
- /****************************************************************************/
- /*************************** UPDATE SPRITE **********************************/
- /****************************************************************************/
-
+	
+	/** ************************************************************************* */
+	/** ************************* UPDATE SPRITE ********************************* */
+	/** ************************************************************************* */
+	
 	public void update(long elapsedTime) {
 		super.update(elapsedTime);
-
-		if (!isAnimate()) {
-			setActive(false);
+		
+		if (!this.isAnimate()) {
+			this.setActive(false);
 		}
 	}
-
+	
 }

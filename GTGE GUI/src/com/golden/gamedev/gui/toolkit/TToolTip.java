@@ -19,122 +19,160 @@ package com.golden.gamedev.gui.toolkit;
 import java.awt.Point;
 
 public class TToolTip extends TComponent {
-	private int initialDelay = 60, 		// default initial,
-				dismissDelay = 250,		// dismiss, and
-				reshowDelay = 30;		// reshow delay
-
+	
+	private int initialDelay = 60, // default initial,
+	        dismissDelay = 250, // dismiss, and
+	        reshowDelay = 30; // reshow delay
+	        
 	protected int initial, dismiss, reshow, dismissTime;
-
-	private TComponent 	tooltip;
-	private String 		tipText = "";	// to avoid same ui creation
-	private boolean		tooltipChanged;	// if tooltip text is changed,
-										// must refresh this tooltip
-										// in order to show the new tooltip text
-
-	private final Point	spacing = new Point(0, 22);
-
+	
+	private TComponent tooltip;
+	private String tipText = ""; // to avoid same ui creation
+	private boolean tooltipChanged; // if tooltip text is changed,
+	// must refresh this tooltip
+	// in order to show the new tooltip text
+	
+	private final Point spacing = new Point(0, 22);
+	
 	public TToolTip() {
-		super(0,0,0,0);
-
-		setLayer(Integer.MAX_VALUE-100); // will always be on top!!! :)
-		setVisible(false);
+		super(0, 0, 0, 0);
+		
+		this.setLayer(Integer.MAX_VALUE - 100); // will always be on top!!! :)
+		this.setVisible(false);
 	}
-
+	
 	public void update() {
-		if (isVisible()) {
-			if (tooltip != null && !tooltipChanged) {
-				if (++dismiss >= dismissTime) {
+		if (this.isVisible()) {
+			if (this.tooltip != null && !this.tooltipChanged) {
+				if (++this.dismiss >= this.dismissTime) {
 					// dismiss the tooltip
-					setToolTipComponent(null);
-					setVisible(false);
-					reshow = 0;
+					this.setToolTipComponent(null);
+					this.setVisible(false);
+					this.reshow = 0;
 				}
-
-			} else {
+				
+			}
+			else {
 				// simply hide the tooltip
-				setVisible(false);
+				this.setVisible(false);
 			}
-
-		} else {
-			if (reshow > 0) reshow--;
-
-			if (tooltip != null &&
-				(reshow > 0 || ++initial >= initialDelay)) {
+			
+		}
+		else {
+			if (this.reshow > 0) {
+				this.reshow--;
+			}
+			
+			if (this.tooltip != null
+			        && (this.reshow > 0 || ++this.initial >= this.initialDelay)) {
 				// show the tooltip
-				show(bsInput.getMouseX(), bsInput.getMouseY());
+				this.show(this.bsInput.getMouseX(), this.bsInput.getMouseY());
 			}
 		}
 	}
+	
 	public void show(int x, int y) {
-		if (tooltip == null) return;
-		setVisible(true);
-
-		initial = 0;
-		dismiss = 0;
-		reshow = reshowDelay;
-		tooltipChanged = false;
-
-		if (ui == null || !tooltip.getToolTipText().equals(tipText)) {
-			createUI();
-
-			tipText = tooltip.getToolTipText();
-			String[] componentTipText = GraphicsUtil.parseString(tipText);
-			dismissTime = (dismissDelay * componentTipText.length);
+		if (this.tooltip == null) {
+			return;
 		}
-
+		this.setVisible(true);
+		
+		this.initial = 0;
+		this.dismiss = 0;
+		this.reshow = this.reshowDelay;
+		this.tooltipChanged = false;
+		
+		if (this.ui == null
+		        || !this.tooltip.getToolTipText().equals(this.tipText)) {
+			this.createUI();
+			
+			this.tipText = this.tooltip.getToolTipText();
+			String[] componentTipText = GraphicsUtil.parseString(this.tipText);
+			this.dismissTime = (this.dismissDelay * componentTipText.length);
+		}
+		
 		// show tooltip, based on mouse coordinate
-		x += spacing.x; y += spacing.y;
-
+		x += this.spacing.x;
+		y += this.spacing.y;
+		
 		// to avoid tooltip exceed frame bounds
-		if (x + ui[0].getWidth() + 20 > frame.getWidth()) {
-			x -= ui[0].getWidth() + spacing.x;
+		if (x + this.ui[0].getWidth() + 20 > this.frame.getWidth()) {
+			x -= this.ui[0].getWidth() + this.spacing.x;
 		}
-		if (y + ui[0].getHeight() + 20 > frame.getHeight()) {
-			y -= ui[0].getHeight() + spacing.y + 8;
+		if (y + this.ui[0].getHeight() + 20 > this.frame.getHeight()) {
+			y -= this.ui[0].getHeight() + this.spacing.y + 8;
 		}
-
-		setLocation(x, y);
+		
+		this.setLocation(x, y);
 	}
-
-	///////// member fields /////////
-	public TComponent getToolTipComponent() { return tooltip; }
+	
+	// /////// member fields /////////
+	public TComponent getToolTipComponent() {
+		return this.tooltip;
+	}
+	
 	public void setToolTipComponent(TComponent tooltip) {
 		if (tooltip != null) {
-   		 	if (tooltip.getToolTipParent() != null) {
-	   		 	tooltip = tooltip.getToolTipParent();
+			if (tooltip.getToolTipParent() != null) {
+				tooltip = tooltip.getToolTipParent();
 			}
-
+			
 			if (tooltip.getToolTipText() == null) {
 				tooltip = null;
 			}
 		}
-		if (this.tooltip == tooltip) { return; }
-
+		if (this.tooltip == tooltip) {
+			return;
+		}
+		
 		this.tooltip = tooltip;
-		tooltipChanged = true;
-
-		if (!isVisible()) {
+		this.tooltipChanged = true;
+		
+		if (!this.isVisible()) {
 			// if tooltip not yet visible and tooltip is changed
 			// start over the tooltip counter visibility
-			initial = 0;
+			this.initial = 0;
 		}
 	}
-
-	public int getInitialDelay() { return initialDelay; }
-	public void setInitialDelay(int i) { initialDelay = i; }
-
-	public int getDismissDelay() { return dismissDelay; }
-	public void setDismissDelay(int i) { dismissDelay = i; }
-
-	public int getReshowDelay() { return reshowDelay; }
-	public void setReshowDelay(int i) { reshowDelay = i; }
-
-	public Point getSpacing() { return spacing; }
-	public void setSpacing(int x, int y) { spacing.x = x; spacing.y = y; }
-
+	
+	public int getInitialDelay() {
+		return this.initialDelay;
+	}
+	
+	public void setInitialDelay(int i) {
+		this.initialDelay = i;
+	}
+	
+	public int getDismissDelay() {
+		return this.dismissDelay;
+	}
+	
+	public void setDismissDelay(int i) {
+		this.dismissDelay = i;
+	}
+	
+	public int getReshowDelay() {
+		return this.reshowDelay;
+	}
+	
+	public void setReshowDelay(int i) {
+		this.reshowDelay = i;
+	}
+	
+	public Point getSpacing() {
+		return this.spacing;
+	}
+	
+	public void setSpacing(int x, int y) {
+		this.spacing.x = x;
+		this.spacing.y = y;
+	}
+	
 	/**
 	 * This Component UI Name is <b>ToolTip</b>.
 	 */
-	public String UIName() { return "ToolTip"; }
-
+	public String UIName() {
+		return "ToolTip";
+	}
+	
 }

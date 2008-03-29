@@ -22,69 +22,68 @@ import java.awt.Graphics2D;
 
 import com.golden.gamedev.object.Background;
 
-
 /**
  * The very basic background type that only fill the background view port with a
- * single color. <p>
- *
+ * single color.
+ * <p>
+ * 
  * This type of background use a fixed memory size. Memory used by small size
  * color background (e.g: 1 x 1) with an extremely large size color background
  * (e.g: 100,000,000 x 100,000,000) is equal.
  */
 public class ColorBackground extends Background {
-
-
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3668701023849676983L;
 	private Color color;
-
-
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
-
-    /**
-     * Creates new <code>ColorBackground</code> with specified size.
-     */
+	
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
+	
+	/**
+	 * Creates new <code>ColorBackground</code> with specified size.
+	 */
 	public ColorBackground(Color bgColor, int w, int h) {
-	    super(w, h);
-
-	    color = bgColor;
+		super(w, h);
+		
+		this.color = bgColor;
 	}
-
-    /**
-     * Creates new <code>ColorBackground</code> as large as screen dimension.
-     */
+	
+	/**
+	 * Creates new <code>ColorBackground</code> as large as screen dimension.
+	 */
 	public ColorBackground(Color bgColor) {
-		color = bgColor;
-    }
-
-
- /****************************************************************************/
- /**************************** BGCOLOR GET / SET *****************************/
- /****************************************************************************/
-
+		this.color = bgColor;
+	}
+	
+	/** ************************************************************************* */
+	/** ************************** BGCOLOR GET / SET **************************** */
+	/** ************************************************************************* */
+	
 	/**
 	 * Returns this background color.
 	 */
 	public Color getColor() {
-		return color;
+		return this.color;
 	}
-
+	
 	/**
 	 * Sets the background color.
 	 */
 	public void setColor(Color bgColor) {
-		color = bgColor;
+		this.color = bgColor;
 	}
-
-
- /****************************************************************************/
- /************************** RENDER BACKGROUND *******************************/
- /****************************************************************************/
-
-    public void render(Graphics2D g, int xbg, int ybg,
-					   int x, int y, int w, int h) {
-		g.setColor(color);
+	
+	/** ************************************************************************* */
+	/** ************************ RENDER BACKGROUND ****************************** */
+	/** ************************************************************************* */
+	
+	public void render(Graphics2D g, int xbg, int ybg, int x, int y, int w, int h) {
+		g.setColor(this.color);
 		g.fillRect(x, y, w, h);
-    }
-
+	}
+	
 }

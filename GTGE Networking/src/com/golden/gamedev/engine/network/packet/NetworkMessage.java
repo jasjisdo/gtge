@@ -22,71 +22,74 @@
 
 package com.golden.gamedev.engine.network.packet;
 
-import com.golden.gamedev.engine.network.*;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import com.golden.gamedev.engine.network.NetworkConfig;
+import com.golden.gamedev.engine.network.NetworkPacket;
+
 /**
- *
+ * 
  * @author Paulus Tuerah
  */
 public final class NetworkMessage extends NetworkPacket {
 	
-	public static short ID = -255;	// the id for network message
-
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5676154023701486957L;
+	
+	public static short ID = -255; // the id for network message
 	
 	private String message;
 	
-	
- /****************************************************************************/
- /******************************* CONSTRUCTOR ********************************/
- /****************************************************************************/
+	/** ************************************************************************* */
+	/** ***************************** CONSTRUCTOR ******************************* */
+	/** ************************************************************************* */
 	
 	/** Creates a new instance of NetworkMessage */
-	public NetworkMessage() { 
+	public NetworkMessage() {
 	}
 	
 	public NetworkMessage(String message) {
 		this.message = message;
 	}
-
 	
 	public short getID() {
-		return ID;
+		return NetworkMessage.ID;
 	}
 	
 	public void setID(short id) {
 		throw new UnsupportedOperationException(
-			"To change NetworkMessage ID, use NetworkMessage.ID = new_id instead. " +
-			"Or use NetworkObject to send String message with unique ID.");
+		        "To change NetworkMessage ID, use NetworkMessage.ID = new_id instead. "
+		                + "Or use NetworkObject to send String message with unique ID.");
 	}
 	
-
 	public String getMessage() {
-		return message;
+		return this.message;
 	}
-
+	
 	public void setMessage(String message) {
 		this.message = message;
 	}
-
 	
 	public void read(DataInputStream input) throws IOException {
 		// read the packet data
-		message = input.readUTF();
+		this.message = input.readUTF();
 	}
 	
 	public void write(DataOutputStream output) throws IOException {
 		// write the packet data
-		output.writeUTF(message);
+		output.writeUTF(this.message);
 	}
-
 	
 	public String toString() {
-		if (!NetworkConfig.DEBUG) return super.toString();
+		if (!NetworkConfig.DEBUG) {
+			return super.toString();
+		}
 		
-		return "NetworkMessage: " + message;
+		return "NetworkMessage: " + this.message;
 	}
 	
 }
