@@ -219,7 +219,7 @@ public class TFloatPanel extends TContainer {
 		}
 		
 		public void setTitle(String st) {
-			this.title = this.title;
+			this.title = st;
 			this.createUI();
 		}
 		
