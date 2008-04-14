@@ -61,9 +61,8 @@ public final class NetworkPing extends NetworkPacket {
 		return NetworkPing.ID;
 	}
 	
-	public void setID(short id) {
-		throw new UnsupportedOperationException(
-		        "To change NetworkPing ID, use NetworkPing.ID = new_id instead.");
+	public static void setID(short id) {
+		ID = id;
 	}
 	
 	public boolean isCompressed() {
