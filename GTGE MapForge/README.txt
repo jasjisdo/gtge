@@ -1,1 +1,0 @@
-The usage of the software contained within the current repository location is, like all GTGE projects, is covered by the GNU LESSER GENERAL PUBLIC LICENSE, VERSION 3 or greater.  The licensing information may be found at http://www.gnu.org/licenses/lgpl.html.
